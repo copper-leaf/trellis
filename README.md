@@ -3,6 +3,9 @@
 
 > A Kotlin implementation of the [Specification Pattern](https://en.wikipedia.org/wiki/Specification_pattern)
 
+[![Codacy Project Grade](https://api.codacy.com/project/badge/Grade/ededa933de9e47059050db93071f8d09)](https://www.codacy.com/app/cjbrooks12/trellis?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=copper-leaf/trellis&amp;utm_campaign=Badge_Grade)
+[![Code Coverage](https://api.codacy.com/project/badge/Coverage/ededa933de9e47059050db93071f8d09)](https://www.codacy.com/app/cjbrooks12/trellis?utm_source=github.com&utm_medium=referral&utm_content=copper-leaf/trellis&utm_campaign=Badge_Coverage)
+
 Specifikation is an implementation of the [Specification Pattern](https://en.wikipedia.org/wiki/Specification_pattern)
 written in Kotlin, and designed for asynchronous evaluation of specifications using Kotlin coroutines.
 
