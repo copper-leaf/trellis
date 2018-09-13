@@ -1,67 +1,88 @@
 package com.copperleaf.trellis;
 
+import com.copperleaf.trellis.api.JavaKt;
 import com.copperleaf.trellis.api.Spek;
-import com.copperleaf.trellis.api.Spek;
+import kotlin.Unit;
 import kotlin.coroutines.experimental.Continuation;
-import kotlin.coroutines.experimental.CoroutineContext;
+import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.concurrent.Callable;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.awaitility.Awaitility.*;
 
 public class TestJavaApi {
 
+    private boolean coroutineIsCompleted = false;
+
+    @BeforeEach
+    void setUp() {
+        coroutineIsCompleted = false;
+    }
+
     @Test
-    public void testJavaEqualSpekFail() {
+    public void testJavaEqualSpekFailSync() {
         String input = "asdf";
         String expected = "qwerty";
         Spek<String, Boolean> spek = new JavaEqualSpek(expected);
 
-        spek.evaluate(input, new Continuation<Boolean>() {
-            @NotNull
+        Boolean aBoolean = JavaKt.evaluateSync(spek, input);
+        assertEquals(false, aBoolean);
+    }
+
+    @Test
+    public void testJavaEqualSpekPassSync() {
+        String input = "qwerty";
+        String expected = "qwerty";
+        Spek<String, Boolean> spek = new JavaEqualSpek(expected);
+
+        JavaKt.evaluateAsync(spek, input, new Function1<Boolean, Unit>() {
             @Override
-            public CoroutineContext getContext() {
+            public Unit invoke(Boolean aBoolean) {
+                System.out.println("testJavaEqualSpekPassSync: " + aBoolean);
+                assertEquals(true, aBoolean);
                 return null;
-            }
-
-            @Override
-            public void resume(Boolean aBoolean) {
-                assertEquals(false, aBoolean);
-            }
-
-            @Override
-            public void resumeWithException(Throwable throwable) {
             }
         });
     }
 
     @Test
-    public void testJavaEqualSpekPass() {
+    public void testJavaEqualSpekFailAsync() {
+        String input = "asdf";
+        String expected = "qwerty";
+        Spek<String, Boolean> spek = new JavaEqualSpek(expected);
+
+        JavaKt.evaluateAsync(spek, input, new Function1<Boolean, Unit>() {
+            @Override
+            public Unit invoke(Boolean aBoolean) {
+                assertEquals(false, aBoolean);
+                return null;
+            }
+        });
+        await().until(coroutineIsCompleted());
+    }
+
+    @Test
+    public void testJavaEqualSpekPassAsync() {
         String input = "qwerty";
         String expected = "qwerty";
         Spek<String, Boolean> spek = new JavaEqualSpek(expected);
 
-        spek.evaluate(input, new Continuation<Boolean>() {
-            @NotNull
+        JavaKt.evaluateAsync(spek, input, new Function1<Boolean, Unit>() {
             @Override
-            public CoroutineContext getContext() {
+            public Unit invoke(Boolean aBoolean) {
+                assertEquals(true, aBoolean);
                 return null;
             }
-
-            @Override
-            public void resume(Boolean aBoolean) {
-                assertEquals(true, aBoolean);
-            }
-
-            @Override
-            public void resumeWithException(Throwable throwable) {
-            }
         });
+        await().until(coroutineIsCompleted());
     }
 
-
-    public static class JavaEqualSpek implements Spek<String, Boolean> {
+    public class JavaEqualSpek implements Spek<String, Boolean> {
 
         private final String input;
 
@@ -72,8 +93,22 @@ public class TestJavaApi {
         @Nullable
         @Override
         public Object evaluate(String candidate, @NotNull Continuation<? super Boolean> continuation) {
-            continuation.resume(input.equals(candidate));
-            return null;
+            try {
+                Thread.sleep(5000);
+            }
+            catch (Exception e) {
+
+            }
+            coroutineIsCompleted = true;
+            return input.equals(candidate);
         }
+    }
+
+    private Callable<Boolean> coroutineIsCompleted() {
+        return new Callable<Boolean>() {
+            public Boolean call() throws Exception {
+                return coroutineIsCompleted;
+            }
+        };
     }
 }
