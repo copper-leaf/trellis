@@ -16,18 +16,27 @@ operator fun <T> Spek<T, Boolean>.unaryMinus() = this.not()
 // Base logical operators
 //----------------------------------------------------------------------------------------------------------------------
 
+/**
+ * Verifies that two speks are both true.
+ */
 class AndSpek<T>(private val left: Spek<T, Boolean>, private val right: Spek<T, Boolean>) : Spek<T, Boolean> {
     override suspend fun evaluate(candidate: T): Boolean {
         return left.evaluate(candidate) && right.evaluate(candidate)
     }
 }
 
+/**
+ * Verifies that at least one of two speks are true.
+ */
 class OrSpek<T>(private val left: Spek<T, Boolean>, private val right: Spek<T, Boolean>) : Spek<T, Boolean> {
     override suspend fun evaluate(candidate: T): Boolean {
         return left.evaluate(candidate) || right.evaluate(candidate)
     }
 }
 
+/**
+ * Inverts a Boolean spek
+ */
 class NotSpek<T>(private val base: Spek<T, Boolean>) : Spek<T, Boolean> {
     override suspend fun evaluate(candidate: T): Boolean {
         return !base.evaluate(candidate)

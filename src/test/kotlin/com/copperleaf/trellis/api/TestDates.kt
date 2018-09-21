@@ -3,7 +3,7 @@ package com.copperleaf.trellis.api
 import com.copperleaf.trellis.impl.strings.BetweenDatesSpek
 import kotlinx.coroutines.experimental.runBlocking
 import org.junit.jupiter.api.Test
-import strikt.api.expect
+import strikt.api.expectThat
 import strikt.assertions.isFalse
 import strikt.assertions.isTrue
 import java.time.LocalDate
@@ -17,12 +17,12 @@ class TestDates {
 
         val spek = BetweenDatesSpek(ValueSpek(startDate), ValueSpek(endDate), CandidateSpek())
 
-        expect(spek.evaluate(LocalDate.now())).isTrue()
-        expect(spek.evaluate(LocalDate.now().minusDays(10))).isFalse()
-        expect(spek.evaluate(LocalDate.now().plusDays(10))).isFalse()
+        expectThat(spek.evaluate(LocalDate.now())).isTrue()
+        expectThat(spek.evaluate(LocalDate.now().minusDays(10))).isFalse()
+        expectThat(spek.evaluate(LocalDate.now().plusDays(10))).isFalse()
 
-        expect(spek.evaluate(LocalDate.now().minusDays(5))).isTrue()
-        expect(spek.evaluate(LocalDate.now().plusDays(5))).isTrue()
+        expectThat(spek.evaluate(LocalDate.now().minusDays(5))).isTrue()
+        expectThat(spek.evaluate(LocalDate.now().plusDays(5))).isTrue()
     }
 
     @Test
@@ -32,12 +32,12 @@ class TestDates {
 
         val spek = BetweenDatesSpek(ValueSpek(startDate), ValueSpek(endDate), CandidateSpek())
 
-        expect(spek.evaluate(LocalDate.now())).isTrue()
-        expect(spek.evaluate(LocalDate.now().minusDays(10))).isFalse()
-        expect(spek.evaluate(LocalDate.now().plusDays(10))).isTrue()
-        expect(spek.evaluate(LocalDate.MAX)).isTrue()
+        expectThat(spek.evaluate(LocalDate.now())).isTrue()
+        expectThat(spek.evaluate(LocalDate.now().minusDays(10))).isFalse()
+        expectThat(spek.evaluate(LocalDate.now().plusDays(10))).isTrue()
+        expectThat(spek.evaluate(LocalDate.MAX)).isTrue()
 
-        expect(spek.evaluate(LocalDate.now().minusDays(5))).isTrue()
+        expectThat(spek.evaluate(LocalDate.now().minusDays(5))).isTrue()
     }
 
     @Test
@@ -47,12 +47,12 @@ class TestDates {
 
         val spek = BetweenDatesSpek(ValueSpek(startDate), ValueSpek(endDate), CandidateSpek())
 
-        expect(spek.evaluate(LocalDate.now())).isTrue()
-        expect(spek.evaluate(LocalDate.now().minusDays(10))).isTrue()
-        expect(spek.evaluate(LocalDate.now().plusDays(10))).isFalse()
-        expect(spek.evaluate(LocalDate.MIN)).isTrue()
+        expectThat(spek.evaluate(LocalDate.now())).isTrue()
+        expectThat(spek.evaluate(LocalDate.now().minusDays(10))).isTrue()
+        expectThat(spek.evaluate(LocalDate.now().plusDays(10))).isFalse()
+        expectThat(spek.evaluate(LocalDate.MIN)).isTrue()
 
-        expect(spek.evaluate(LocalDate.now().plusDays(5))).isTrue()
+        expectThat(spek.evaluate(LocalDate.now().plusDays(5))).isTrue()
     }
 
 

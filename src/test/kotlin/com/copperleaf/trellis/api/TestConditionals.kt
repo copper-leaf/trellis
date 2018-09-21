@@ -2,7 +2,7 @@ package com.copperleaf.trellis.api
 
 import kotlinx.coroutines.experimental.runBlocking
 import org.junit.jupiter.api.Test
-import strikt.api.expect
+import strikt.api.expectThat
 import strikt.assertions.isEqualTo
 
 class TestConditionals {
@@ -11,8 +11,8 @@ class TestConditionals {
     fun testIf() = runBlocking<Unit> {
         val spek = CandidateSpek<Boolean>().then(ValueSpek("pass"), ValueSpek("fail"))
 
-        expect(spek.evaluate(true)).isEqualTo("pass")
-        expect(spek.evaluate(false)).isEqualTo("fail")
+        expectThat(spek.evaluate(true)).isEqualTo("pass")
+        expectThat(spek.evaluate(false)).isEqualTo("fail")
     }
 
 }

@@ -4,7 +4,7 @@ import com.copperleaf.trellis.impl.strings.MaxLengthSpek
 import com.copperleaf.trellis.impl.strings.MinLengthSpek
 import kotlinx.coroutines.experimental.runBlocking
 import org.junit.jupiter.api.Test
-import strikt.api.expect
+import strikt.api.expectThat
 import strikt.assertions.isFalse
 import strikt.assertions.isTrue
 
@@ -15,8 +15,8 @@ class TestBooleans {
         val input = "asdf"
         val spek = MinLengthSpek(6)
 
-        expect(spek.evaluate(input)).isFalse()
-        expect(spek.not().evaluate(input)).isTrue()
+        expectThat(spek.evaluate(input)).isFalse()
+        expectThat(spek.not().evaluate(input)).isTrue()
     }
 
     @Test
@@ -24,8 +24,8 @@ class TestBooleans {
         val input = "qwerty"
         val spek = MinLengthSpek(6)
 
-        expect(spek.evaluate(input)).isTrue()
-        expect(spek.not().evaluate(input)).isFalse()
+        expectThat(spek.evaluate(input)).isTrue()
+        expectThat(spek.not().evaluate(input)).isFalse()
     }
 
     @Test
@@ -34,8 +34,8 @@ class TestBooleans {
         val expected = "qwerty"
         val spek = EqualsSpek(expected)
 
-        expect(spek.evaluate(input)).isFalse()
-        expect(spek.not().evaluate(input)).isTrue()
+        expectThat(spek.evaluate(input)).isFalse()
+        expectThat(spek.not().evaluate(input)).isTrue()
     }
 
     @Test
@@ -44,8 +44,8 @@ class TestBooleans {
         val expected = "asdf"
         val spek = EqualsSpek(expected)
 
-        expect(spek.evaluate(input)).isTrue()
-        expect(spek.not().evaluate(input)).isFalse()
+        expectThat(spek.evaluate(input)).isTrue()
+        expectThat(spek.not().evaluate(input)).isFalse()
     }
 
     @Test
@@ -53,8 +53,8 @@ class TestBooleans {
         val input = "asdf"
         val expected = "querty"
         val spek = MinLengthSpek(6) and EqualsSpek(expected)
-        expect(spek.evaluate(input)).isFalse()
-        expect(spek.not().evaluate(input)).isTrue()
+        expectThat(spek.evaluate(input)).isFalse()
+        expectThat(spek.not().evaluate(input)).isTrue()
     }
 
     @Test
@@ -63,8 +63,8 @@ class TestBooleans {
         val expected = "querty"
         val spek = MinLengthSpek(6) and EqualsSpek(expected)
 
-        expect(spek.evaluate(input)).isTrue()
-        expect(spek.not().evaluate(input)).isFalse()
+        expectThat(spek.evaluate(input)).isTrue()
+        expectThat(spek.not().evaluate(input)).isFalse()
     }
 
     @Test
@@ -73,8 +73,8 @@ class TestBooleans {
         val expected = "querty"
         val spek = MinLengthSpek(6) andNot EqualsSpek(expected)
 
-        expect(spek.evaluate(input)).isFalse()
-        expect(spek.not().evaluate(input)).isTrue()
+        expectThat(spek.evaluate(input)).isFalse()
+        expectThat(spek.not().evaluate(input)).isTrue()
     }
 
     @Test
@@ -83,8 +83,8 @@ class TestBooleans {
         val expected = "querty"
         val spek = MinLengthSpek(6) andNot EqualsSpek(expected)
 
-        expect(spek.evaluate(input)).isTrue()
-        expect(spek.not().evaluate(input)).isFalse()
+        expectThat(spek.evaluate(input)).isTrue()
+        expectThat(spek.not().evaluate(input)).isFalse()
     }
 
     @Test
@@ -92,8 +92,8 @@ class TestBooleans {
         val input = "asdfasdf"
         val spek = MinLengthSpek(6) and MaxLengthSpek(12)
 
-        expect(spek.evaluate(input)).isTrue()
-        expect(spek.not().evaluate(input)).isFalse()
+        expectThat(spek.evaluate(input)).isTrue()
+        expectThat(spek.not().evaluate(input)).isFalse()
     }
 
     @Test
@@ -105,8 +105,8 @@ class TestBooleans {
                 .map { EqualsSpek(it) }
                 .reduce { acc: Spek<String, Boolean>, next: Spek<String, Boolean> -> acc or next }
 
-        expect(spek.evaluate(input)).isFalse()
-        expect(spek.not().evaluate(input)).isTrue()
+        expectThat(spek.evaluate(input)).isFalse()
+        expectThat(spek.not().evaluate(input)).isTrue()
     }
 
     @Test
@@ -118,8 +118,8 @@ class TestBooleans {
                 .map { EqualsSpek(it) }
                 .reduce { acc: Spek<String, Boolean>, next: Spek<String, Boolean> -> acc or next }
 
-        expect(spek.evaluate(input)).isTrue()
-        expect(spek.not().evaluate(input)).isFalse()
+        expectThat(spek.evaluate(input)).isTrue()
+        expectThat(spek.not().evaluate(input)).isFalse()
     }
 
 // Operator overloading and infix method testing
@@ -130,7 +130,7 @@ class TestBooleans {
         val input = "asdf"
         val spek = MinLengthSpek(6)
 
-        expect(spek.evaluate(input)).isFalse()
+        expectThat(spek.evaluate(input)).isFalse()
     }
 
     @Test
@@ -138,7 +138,7 @@ class TestBooleans {
         val input = "asdf"
         val spek = -MinLengthSpek(6)
 
-        expect(spek.evaluate(input)).isTrue()
+        expectThat(spek.evaluate(input)).isTrue()
     }
 
     @Test
@@ -146,7 +146,7 @@ class TestBooleans {
         val input = "asdfasdf"
         val spek = MinLengthSpek(6) + MaxLengthSpek(12)
 
-        expect(spek.evaluate(input)).isTrue()
+        expectThat(spek.evaluate(input)).isTrue()
     }
 
     @Test
@@ -154,7 +154,7 @@ class TestBooleans {
         val input = "asdfasdf"
         val spek = MinLengthSpek(6) + -MaxLengthSpek(12)
 
-        expect(spek.evaluate(input)).isFalse()
+        expectThat(spek.evaluate(input)).isFalse()
     }
 
     @Test
@@ -162,7 +162,7 @@ class TestBooleans {
         val input = "asdfasdf"
         val spek = MinLengthSpek(6) and MaxLengthSpek(12)
 
-        expect(spek.evaluate(input)).isTrue()
+        expectThat(spek.evaluate(input)).isTrue()
     }
 
     @Test
@@ -170,7 +170,7 @@ class TestBooleans {
         val input = "asdfasdf"
         val spek = MinLengthSpek(6) andNot MaxLengthSpek(12)
 
-        expect(spek.evaluate(input)).isFalse()
+        expectThat(spek.evaluate(input)).isFalse()
     }
 
     @Test
@@ -178,7 +178,7 @@ class TestBooleans {
         val input = "a"
         val spek = EqualsSpek("a") or EqualsSpek("b")
 
-        expect(spek.evaluate(input)).isTrue()
+        expectThat(spek.evaluate(input)).isTrue()
     }
 
     @Test
@@ -186,7 +186,7 @@ class TestBooleans {
         val input = "b"
         val spek = EqualsSpek("a") orNot EqualsSpek("b")
 
-        expect(spek.evaluate(input)).isFalse()
+        expectThat(spek.evaluate(input)).isFalse()
     }
 
 }
