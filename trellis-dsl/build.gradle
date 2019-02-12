@@ -15,7 +15,7 @@ repositories {
 dependencies {
     // kotlin
     api project(":trellis-core")
-    implementation 'com.github.copper-leaf:kudzu:93780091e4'
+    implementation 'com.github.copper-leaf:kudzu:7606538439'
 
     // testing
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.1.0"

@@ -1,9 +1,8 @@
 package com.copperleaf.trellis.dsl
 
-import com.copperleaf.kudzu.Node
-import com.copperleaf.kudzu.ParserContext
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.CsvSource
+import org.junit.jupiter.params.provider.ValueSource
 import strikt.api.expectThat
 
 class TrellisDslParserTest {
@@ -24,19 +23,10 @@ class TrellisDslParserTest {
         "'',            false"
     )
     fun testParsingArgumentList(input: String, expectedSuccess: Boolean) {
-        println("Parsing: [$input]")
-        val output: Pair<Node, ParserContext>?
-        val underTest = TrellisDslParser.argumentListParser
-
-        output = try {
-            underTest.test(input)
-        } catch (e: Exception) {
-            null
-        }
+        val output = TrellisDslParser.argumentListParser.test(input)
 
         if (expectedSuccess) {
             expectThat(output).parsedCorrectly()
-            println(output?.first?.toString())
         } else {
             expectThat(output).parsedIncorrectly()
         }
@@ -58,19 +48,10 @@ class TrellisDslParserTest {
         "'(, )',          false"
     )
     fun testParsingArguments(input: String, expectedSuccess: Boolean) {
-        println("Parsing: [$input]")
-        val output: Pair<Node, ParserContext>?
-        val underTest = TrellisDslParser.argumentsParser
-
-        output = try {
-            underTest.test(input)
-        } catch (e: Exception) {
-            null
-        }
+        val output = TrellisDslParser.argumentsParser.test(input)
 
         if (expectedSuccess) {
             expectThat(output).parsedCorrectly()
-            println(output?.first?.toString())
         } else {
             expectThat(output).parsedIncorrectly()
         }
@@ -97,107 +78,71 @@ class TrellisDslParserTest {
         "' asdf()',           false"
     )
     fun testParsingSpekValue(input: String, expectedSuccess: Boolean) {
-        println("Parsing: [$input]")
-        val output: Pair<Node, ParserContext>?
-        val underTest = TrellisDslParser.spekParser
-
-        output = try {
-            underTest.test(input)
-        } catch (e: Exception) {
-            null
-        }
+        val output = TrellisDslParser.spekParser.test(input)
 
         if (expectedSuccess) {
             expectThat(output).parsedCorrectly()
-            println(output?.first?.toString())
         } else {
             expectThat(output).parsedIncorrectly()
         }
     }
 
     @ParameterizedTest
-    @CsvSource(
-        "'asdf(asdf)',        true",
-        "'( asdf(asdf) )',        true"
+    @ValueSource(
+        strings = [
+            "asdf(asdf)",
+            "(asdf(asdf))"
+        ]
     )
-    fun testParsingSpekExpressionTerm(input: String, expectedSuccess: Boolean) {
-        println("Parsing: [$input]")
-        val output: Pair<Node, ParserContext>?
-        val underTest = TrellisDslParser.spekExpressionTerm
-
-        output = try {
-            underTest.test(input)
-        } catch (e: Exception) {
-            null
-        }
-
-        if (expectedSuccess) {
-            expectThat(output).parsedCorrectly()
-            println(output?.first?.toString())
-        } else {
-            expectThat(output).parsedIncorrectly()
-        }
+    fun testParsingSpekExpressionTerm(input: String) {
+        val output = TrellisDslParser.spekExpressionTerm.test(input)
+        expectThat(output).parsedCorrectly()
     }
 
     @ParameterizedTest
-    @CsvSource(
-        "'asdf',                           true",
-        "'asdf()',                         true",
-        "'asdf(1)',                        true",
-        "'asdf(1, 2)',                     true",
-        "'asdf(1, 2, 3, 4, 5, 6, 7, 8)',   true",
-        "'asdf(1, qwerty(2))',             true",
+    @ValueSource(
+        strings = [
+            "asdf",
+            "asdf()",
+            "asdf(1)",
+            "asdf(1, 2)",
+            "asdf(1, 2, 3, 4, 5, 6, 7, 8)",
+            "asdf(1, qwerty(2))",
+            "(asdf)",
+            "(asdf(1))",
+            "(asdf(1, 2))",
+            "(asdf(1, 2, 3, 4, 5, 6, 7, 8))",
+            "(asdf)",
+            "(asdf(1))",
+            "(asdf(1, 2))",
+            "(asdf(1, a(b(c(d(1)))), 3, 4, 5, 6, 7, 8))",
+            "(asdf(1, (a(b(c(d(1))))), 3, 4, 5, 6, 7, 8))",
+            "(asdf(( a() ), ( a() )))",
+            "a and b",
+            "a & b",
+            "a or b",
+            "a | b",
+            "not a",
+            "!a",
+            "not a and b",
+            "not a or b",
+            "not (a or (b & c))",
+            "( a( (c and d | e(f(1, 2, 3) )) ) )",
 
-        "'(asdf)',                         true",
-        "'(asdf(1))',                      true",
-        "'(asdf(1, 2))',                   true",
-        "'(asdf(1, 2, 3, 4, 5, 6, 7, 8))', true",
-
-        "'(asdf)',                         true",
-        "'(asdf(1))',                      true",
-        "'(asdf(1, 2))',                   true",
-        "'(asdf(1, a(b(c(d(1)))), 3, 4, 5, 6, 7, 8))', true",
-        "'(asdf(1, (a(b(c(d(1))))), 3, 4, 5, 6, 7, 8))', true",
-        "'(asdf(( a() ), ( a() )))', true",
-
-        "'a and b', true",
-        "'a & b',   true",
-
-        "'a or b',  true",
-        "'a | b',   true",
-
-        "'not a',   true",
-        "'!a',      true",
-
-        "'not a and b',         true",
-        "'not a or b',          true",
-        "'not (a or (b & c))',  true",
-
-        "'( a( (c and d | e(f(1, 2, 3) )) ) )', true"
+            "a()and b",
+            "a and b()",
+            "a()and b()",
+            "a() and b",
+            "a and b()",
+            "a() and b()"
+        ]
     )
-    fun testParsingSpekExpression(input: String, expectedSuccess: Boolean) {
-        println("Parsing: [$input]")
-        val output: Pair<Node, ParserContext>?
-        val underTest = TrellisDslParser.spekExpression
+    fun testParsingSpekExpression(input: String) {
+        val output = TrellisDslParser.spekExpression.test(input)
+        expectThat(output).parsedCorrectly()
 
-        output = try {
-            underTest.test(input)
-        } catch (e: Exception) {
-            null
-        }
-
-        if (expectedSuccess) {
-            expectThat(output).parsedCorrectly()
-
-            println(output.toString())
-
-            val result = TrellisDslParser.SpekExpressionContext(emptyList())
-            TrellisDslParser.visitor.visit(result, output!!.first)
-
-            println(result.value.toString())
-        } else {
-            expectThat(output).parsedIncorrectly()
-        }
+        val result = SpekExpressionContext(emptyList())
+        TrellisDslVisitor.visit(result, output!!.first)
     }
 
 }

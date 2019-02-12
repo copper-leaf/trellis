@@ -1,15 +1,18 @@
 package com.copperleaf.trellis.impl.strings
 
 import com.copperleaf.trellis.api.Spek
+import com.copperleaf.trellis.api.ValueSpek
 
-class MinLengthSpek(val minLength: Int) : Spek<String, Boolean> {
+class MinLengthSpek(private val minLength: Spek<String, Int>) : Spek<String, Boolean> {
+    constructor(intVal: Int) : this(ValueSpek(intVal))
     override suspend fun evaluate(candidate: String): Boolean {
-        return candidate.length >= minLength
+        return candidate.length >= minLength.evaluate(candidate)
     }
 }
 
-class MaxLengthSpek(val minLength: Int) : Spek<String, Boolean> {
+class MaxLengthSpek(private val maxLength: Spek<String, Int>) : Spek<String, Boolean> {
+    constructor(intVal: Int) : this(ValueSpek(intVal))
     override suspend fun evaluate(candidate: String): Boolean {
-        return candidate.length <= minLength
+        return candidate.length <= maxLength.evaluate(candidate)
     }
 }
