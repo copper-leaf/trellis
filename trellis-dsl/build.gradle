@@ -1,0 +1,82 @@
+plugins {
+    id 'java'
+    id 'kotlin'
+    id 'jacoco'
+}
+
+group = rootProject.group
+version = rootProject.group
+
+repositories {
+    jcenter()
+    maven { url 'https://jitpack.io' }
+}
+
+dependencies {
+    // kotlin
+    api project(":trellis-core")
+    implementation 'com.github.copper-leaf:kudzu:93780091e4'
+
+    // testing
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.1.0"
+    testCompile "org.junit.jupiter:junit-jupiter-api:5.1.0"
+    testCompile "org.junit.jupiter:junit-jupiter-params:5.1.0"
+    testCompile "io.strikt:strikt-core:0.17.2"
+}
+
+sourceCompatibility = JavaVersion.VERSION_1_6
+compileKotlin {
+    kotlinOptions.jvmTarget = "1.6"
+}
+test {
+    useJUnitPlatform()
+    testLogging {
+        showStandardStreams = true
+    }
+}
+jacocoTestReport {
+    reports {
+        xml.enabled true
+        html.enabled false
+    }
+}
+
+task deploy {
+    doLast {}
+}
+
+tasks.check.dependsOn jacocoTestReport
+
+// Code Coverage Reports
+//----------------------------------------------------------------------------------------------------------------------
+task codeCoverageReport(type: JacocoReport) {
+    dependsOn test
+
+    executionData fileTree(project.rootDir.absolutePath).include("**/build/jacoco/*.exec")
+    sourceSets sourceSets.main
+
+    reports {
+        xml.enabled true
+        xml.destination "${buildDir}/reports/jacoco/report.xml"
+        html.enabled false
+        csv.enabled false
+    }
+}
+
+configurations { codacy }
+dependencies {
+    codacy 'com.github.codacy:codacy-coverage-reporter:4.0.2'
+}
+task sendCoverageToCodacy(type: JavaExec) {
+    dependsOn codeCoverageReport
+
+    main = "com.codacy.CodacyCoverageReporter"
+    classpath = configurations.codacy
+    args = [
+            "report",
+            "-l", "Java",
+            "-r", "${buildDir}/reports/jacoco/report.xml",
+            "-t", "${System.getenv("CODACY_PROJECT_TOKEN")}",
+            "--language", "Kotlin"
+    ]
+}
