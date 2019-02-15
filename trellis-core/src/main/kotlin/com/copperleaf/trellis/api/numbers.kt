@@ -44,7 +44,6 @@ class LessThanSpek(private val base: Spek<Number, Number>, private val allowEqua
     }
 }
 
-
 class LargestSpek<T>(private vararg val bases: Spek<T, Number>) : Spek<T, Number> {
 
     override suspend fun evaluate(candidate: T): Number {

@@ -4,12 +4,7 @@ import com.copperleaf.kudzu.Node
 import com.copperleaf.kudzu.NonTerminalNode
 import com.copperleaf.kudzu.ParserContext
 import com.copperleaf.kudzu.TerminalNode
-import com.copperleaf.kudzu.parser.CharParser
-import com.copperleaf.kudzu.parser.ManyParser
-import org.junit.jupiter.api.Test
 import strikt.api.Assertion
-import strikt.api.expectThat
-import strikt.assertions.isTrue
 
 fun Assertion.Builder<Pair<Node, ParserContext>?>.parsedCorrectly(expected: String? = null, allowRemaining: Boolean = false): Assertion.Builder<Pair<Node, ParserContext>> =
     assert("parsedCorrectly") {

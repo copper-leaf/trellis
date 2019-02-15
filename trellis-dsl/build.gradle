@@ -15,7 +15,7 @@ repositories {
 dependencies {
     // kotlin
     api project(":trellis-core")
-    implementation 'com.github.copper-leaf:kudzu:7606538439'
+    implementation 'com.github.copper-leaf:kudzu:e5246b3dae'
 
     // testing
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.1.0"
@@ -27,6 +27,9 @@ dependencies {
 sourceCompatibility = JavaVersion.VERSION_1_6
 compileKotlin {
     kotlinOptions.jvmTarget = "1.6"
+}
+compileTestKotlin {
+    kotlinOptions.jvmTarget = "1.8"
 }
 test {
     useJUnitPlatform()

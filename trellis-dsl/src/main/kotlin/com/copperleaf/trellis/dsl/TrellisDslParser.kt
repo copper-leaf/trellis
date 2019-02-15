@@ -27,10 +27,9 @@ class TrellisDslParser {
     companion object {
         fun parse(input: String): Node? {
             val parseResult = spekExpression.test(ParserContext(input, 0, false))
-            return if(parseResult != null && parseResult.second.isEmpty()) {
+            return if (parseResult != null && parseResult.second.isEmpty()) {
                 parseResult.first
-            }
-            else {
+            } else {
                 null
             }
         }
@@ -101,10 +100,24 @@ class TrellisDslParser {
             )
         )
 
-        val operators = listOf<EvaluableOperator<Spek<*, *>>>(
-            InfixEvaluableOperator(and, 40) { lhs, rhs -> AndSpek(lhs as Spek<Any, Boolean>, rhs as Spek<Any, Boolean>) },
-            InfixEvaluableOperator(or, 60) { lhs, rhs -> OrSpek(lhs as Spek<Any, Boolean>, rhs as Spek<Any, Boolean>) },
-            PrefixEvaluableOperator(not, 80) { lhs -> NotSpek(lhs as Spek<Any, Boolean>) }
+        val operators = listOf<EvaluableOperator<SpekExpressionContext, Spek<*, *>>>(
+            InfixEvaluableOperator(and, 40) { _, lhs, rhs ->
+                AndSpek(
+                    lhs as Spek<Any, Boolean>,
+                    rhs as Spek<Any, Boolean>
+                )
+            },
+            InfixEvaluableOperator(or, 60) { _, lhs, rhs ->
+                OrSpek(
+                    lhs as Spek<Any, Boolean>,
+                    rhs as Spek<Any, Boolean>
+                )
+            },
+            PrefixEvaluableOperator(not, 80) { _, lhs ->
+                NotSpek(
+                    lhs as Spek<Any, Boolean>
+                )
+            }
         )
 
         init {

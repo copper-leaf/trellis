@@ -141,7 +141,7 @@ class TrellisDslParserTest {
         val output = TrellisDslParser.spekExpression.test(input)
         expectThat(output).parsedCorrectly()
 
-        val result = SpekExpressionContext(emptyList())
+        val result = SpekExpressionContext()
         TrellisDslVisitor.visit(result, output!!.first)
     }
 

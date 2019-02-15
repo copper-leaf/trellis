@@ -16,6 +16,7 @@ import com.copperleaf.trellis.api.Spek
 import com.copperleaf.trellis.api.ValueSpek
 import kotlinx.coroutines.runBlocking
 
+@Suppress("UNCHECKED_CAST")
 class TrellisDslVisitor {
 
     companion object {
@@ -25,7 +26,7 @@ class TrellisDslVisitor {
             visitor.visit(context, node)
         }
 
-        private fun createSpekFromExpressionOrNode(context: SpekExpressionContext, node: Node): Spek<*, *> {
+        private fun createSpekFromExpressionOrNode(context: SpekExpressionContext, node: Node): Spek<Any, Any> {
             val hasSubExpr = node
                 .child<SequenceNode>()
                 .has(NamedNode::class, "subExpr")
@@ -40,7 +41,7 @@ class TrellisDslVisitor {
             }
         }
 
-        private suspend fun createSpekFromExpression(context: SpekExpressionContext, node: Node): Spek<*, *> {
+        private fun createSpekFromExpression(context: SpekExpressionContext, node: Node): Spek<Any, Any> {
             val subExpr = node
                 .child<SequenceNode>()
                 .find<NamedNode>("subExpr")
@@ -48,11 +49,11 @@ class TrellisDslVisitor {
             val innerContext = context.copy()
             visitor.visit(innerContext, subExpr)
 
-            return innerContext.value!!
+            return innerContext.value as Spek<Any, Any>
         }
 
-        private suspend fun createSpekFromTerm(context: SpekExpressionContext, node: Node): Spek<*, *> {
-            val argValues = mutableListOf<Spek<*, *>>()
+        private fun createSpekFromTerm(context: SpekExpressionContext, node: Node): Spek<Any, Any> {
+            val argValues = mutableListOf<Spek<Any, Any>>()
 
             val spekName = node
                 .child<SequenceNode>()
@@ -99,14 +100,15 @@ class TrellisDslVisitor {
             return createSpekFromArgs(context, spekName, argValues)
         }
 
-        private suspend fun createSpekFromArgs(context: SpekExpressionContext, spekName: String, args: List<Spek<*, *>>): Spek<*, *> {
+        private fun createSpekFromArgs(context: SpekExpressionContext, spekName: String, args: List<Spek<Any, Any>>): Spek<Any, Any> {
             return context
-                .spekClasses
+                .spekIdentifiers
                 .firstOrNull { it.name == spekName }
                 ?.ctor
-                ?.invoke(args)
-                ?: ValueSpek<Any, String>(spekName)
+                ?.invoke(context, args) as? Spek<Any, Any>
+                ?: ValueSpek<Any, String>(spekName) as Spek<Any, Any>
         }
     }
 
 }
+

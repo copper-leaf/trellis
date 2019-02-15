@@ -7,16 +7,21 @@ interface Spek<T, U> {
 /**
  * Treat a static value as the return value a spek. Value is lazily loaded.
  */
-class ValueSpek<T, U>(private val value: suspend ()->U) : Spek<T, U> {
-    constructor(value: U) : this({value})
-    override suspend fun evaluate(candidate: T): U { return value() }
+class ValueSpek<T, U>(private val value: suspend () -> U) : Spek<T, U> {
+    constructor(value: U) : this({ value })
+
+    override suspend fun evaluate(candidate: T): U {
+        return value()
+    }
 }
 
 /**
  * Treat a candidate as the return value of a Spek.
  */
 class CandidateSpek<T> : Spek<T, T> {
-    override suspend fun evaluate(candidate: T): T { return candidate }
+    override suspend fun evaluate(candidate: T): T {
+        return candidate
+    }
 }
 
 /**
@@ -31,8 +36,7 @@ class EqualsSpek<T>(private val base: Spek<T, T>) : Spek<T, Boolean> {
 
         return if (a is Number && b is Number) {
             a.toDouble() == b.toDouble()
-        }
-        else {
+        } else {
             a == b
         }
     }
@@ -46,7 +50,7 @@ class EqualsSpek<T>(private val base: Spek<T, T>) : Spek<T, Boolean> {
  */
 class AlsoSpek<T, V, U>(private val newCandidate: Spek<T, V>, private val base: Spek<V, U>) : Spek<T, U> {
     constructor(value: V, base: Spek<V, U>) : this(ValueSpek(value), base)
-    constructor(value: suspend ()->V, base: Spek<V, U>) : this(ValueSpek(value), base)
+    constructor(value: suspend () -> V, base: Spek<V, U>) : this(ValueSpek(value), base)
 
     override suspend fun evaluate(candidate: T): U {
         return base.evaluate(newCandidate.evaluate(candidate))
