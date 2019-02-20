@@ -41,6 +41,23 @@ class EqualsSpek<T>(private val base: Spek<T, T>) : Spek<T, Boolean> {
         }
     }
 }
+class EqualsOperatorSpek<T>(private val lhs: Spek<T, T>, private val rhs: Spek<T, T>, private val strict: Boolean = false) : Spek<T, Boolean> {
+    override suspend fun evaluate(candidate: T): Boolean {
+        val a = lhs.evaluate(candidate)
+        val b = rhs.evaluate(candidate)
+
+        return if(strict) {
+            a === b
+        }
+        else {
+            if (a is Number && b is Number) {
+                a.toDouble() == b.toDouble()
+            } else {
+                a == b
+            }
+        }
+    }
+}
 
 /**
  * Adds a new candidate to the Spek chain, to be evaluated by a matching Spek. This allows a single Spek to be evaluated

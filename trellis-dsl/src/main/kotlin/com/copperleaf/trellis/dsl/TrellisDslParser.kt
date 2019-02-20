@@ -4,22 +4,16 @@ import com.copperleaf.kudzu.Node
 import com.copperleaf.kudzu.ParserContext
 import com.copperleaf.kudzu.parser.CharInParser
 import com.copperleaf.kudzu.parser.ChoiceParser
-import com.copperleaf.kudzu.parser.EvaluableOperator
 import com.copperleaf.kudzu.parser.ExpressionParser
-import com.copperleaf.kudzu.parser.InfixEvaluableOperator
 import com.copperleaf.kudzu.parser.LazyParser
 import com.copperleaf.kudzu.parser.ManyParser
 import com.copperleaf.kudzu.parser.MaybeParser
 import com.copperleaf.kudzu.parser.NamedParser
 import com.copperleaf.kudzu.parser.OptionalWhitespaceParser
-import com.copperleaf.kudzu.parser.PrefixEvaluableOperator
+import com.copperleaf.kudzu.parser.ScanParser
 import com.copperleaf.kudzu.parser.SequenceParser
 import com.copperleaf.kudzu.parser.TokenParser
-import com.copperleaf.kudzu.parser.WordParser
-import com.copperleaf.trellis.api.AndSpek
-import com.copperleaf.trellis.api.NotSpek
-import com.copperleaf.trellis.api.OrSpek
-import com.copperleaf.trellis.api.Spek
+import com.copperleaf.trellis.dsl.TrellisDslOperators.Companion.operators
 
 @Suppress("UNCHECKED_CAST")
 class TrellisDslParser {
@@ -37,32 +31,16 @@ class TrellisDslParser {
         val spekExpressionTerm = LazyParser()
         val spekExpression = LazyParser()
 
-        private val ws = OptionalWhitespaceParser()
-        private val spekNameParser = TokenParser(name = "spekName")
-
-        private val and = SequenceParser(
-            ChoiceParser(
-                WordParser("&"),
-                WordParser("and")
+        internal val ws = OptionalWhitespaceParser()
+        private val spekNameParser = ChoiceParser(
+            SequenceParser(
+                CharInParser('\''),
+                ScanParser(CharInParser('\'')),
+                CharInParser('\''),
+                name = "stringValue"
             ),
-            ws,
-            name = "and"
-        )
-        private val or = SequenceParser(
-            ChoiceParser(
-                WordParser("|"),
-                WordParser("or")
-            ),
-            ws,
-            name = "or"
-        )
-        private val not = SequenceParser(
-            ChoiceParser(
-                WordParser("!"),
-                WordParser("not")
-            ),
-            ws,
-            name = "not"
+            TokenParser(),
+            name = "spekName"
         )
 
         private val argumentValueParser = SequenceParser(
@@ -100,26 +78,6 @@ class TrellisDslParser {
             )
         )
 
-        val operators = listOf<EvaluableOperator<SpekExpressionContext, Spek<*, *>>>(
-            InfixEvaluableOperator(and, 40) { _, lhs, rhs ->
-                AndSpek(
-                    lhs as Spek<Any, Boolean>,
-                    rhs as Spek<Any, Boolean>
-                )
-            },
-            InfixEvaluableOperator(or, 60) { _, lhs, rhs ->
-                OrSpek(
-                    lhs as Spek<Any, Boolean>,
-                    rhs as Spek<Any, Boolean>
-                )
-            },
-            PrefixEvaluableOperator(not, 80) { _, lhs ->
-                NotSpek(
-                    lhs as Spek<Any, Boolean>
-                )
-            }
-        )
-
         init {
             spekExpressionTerm.parser = ChoiceParser(
                 SequenceParser(
@@ -131,7 +89,8 @@ class TrellisDslParser {
                     ws,
                     NamedParser(spekExpression, name = "subExpr"),
                     ws,
-                    CharInParser(')')
+                    CharInParser(')'),
+                    ws
                 ),
                 name = "exprTerm"
             )

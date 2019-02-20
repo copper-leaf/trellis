@@ -23,9 +23,10 @@ class TrellisDslVisitorTest {
         "'minLength(2) and maxLength(8)', a,            false",
         "'minLength(2) and maxLength(8)', asdfasdfasdf, false",
 
-        "'minLength(8) or maxLength(4)',  asdfasdf,     true",
-        "'minLength(8) or maxLength(4)',  asdf,         true",
-        "'minLength(8) or maxLength(4)',  asdfas,       false"
+        "'minLength(8) or maxLength(4)',     asdfasdf, true",
+        "'minLength(8) or maxLength(4)',     asdf,     true",
+        "'minLength(8) or maxLength(4)',     asdfas,   false",
+        "'minLength(8) or not maxLength(4)', asdfas,   true"
     )
     fun testParsingBooleanSpekExpression(input: String, candidate: String, expectedSuccess: Boolean) {
         val output = TrellisDslParser.parse(input)
@@ -40,7 +41,6 @@ class TrellisDslVisitorTest {
             }
 
             coerce { _, value ->
-                println("using manual conversion function from object to int")
                 value.toString().toInt()
             }
         }
@@ -80,9 +80,6 @@ class TrellisDslVisitorTest {
         TrellisDslVisitor.visit(spekContext, output!!)
 
         val spek = spekContext.value as Spek<String, Boolean>
-
-        println(spek)
-
         expect {
             that(catching { spek.evaluate(candidate) })
                 .isNotNull()
@@ -97,7 +94,7 @@ class TrellisDslVisitorTest {
                 "largest(2, 3), " +
                 "smallest(19, 17), " +
                 "largest(5, 3)" +
-        ")', 'Mr. Manager', 17"
+                ")', 'Mr. Manager', 17"
     )
     fun testParsingNumericSpekExpressionWithSubExpressions(input: String, candidate: String, expectedResult: Int) {
         val output = TrellisDslParser.parse(input)
@@ -127,6 +124,69 @@ class TrellisDslVisitorTest {
         val spek = spekContext.value as Spek<String, Number>
         expect {
             that(spek.evaluate(candidate)).isEqualTo(expectedResult)
+        }
+    }
+
+    @ParameterizedTest
+    @CsvSource(
+        "'1 > 1', false",
+        "'2 > 1', true",
+        "'1 >= 1', true",
+        "'2 >= 1', true",
+
+        "'1 < 1', false",
+        "'1 < 2', true",
+        "'1 <= 1', true",
+        "'1 <= 2', true",
+
+        "'1 == 1', true",
+        "'1 != 1', false",
+        "'1 == 2', false",
+        "'1 != 2', true",
+
+        "'1 gt 1', false",
+        "'2 gt 1', true",
+        "'1 gte 1', true",
+        "'2 gte 1', true",
+
+        "'1 lt 1', false",
+        "'1 lt 2', true",
+        "'1 lte 1', true",
+        "'1 lte 2', true",
+
+        "'1 eq 1', true",
+        "'1 neq 1', false",
+        "'1 eq 2', false",
+        "'1 neq 2', true"
+    )
+    fun testComparisons(input: String, expectedResult: Boolean) {
+        val output = TrellisDslParser.parse(input)
+        expectThat(output).isNotNull()
+
+        val spekContext = SpekExpressionContext {
+            register { cxt, args ->
+                val typesafeArgs = args
+                    .map { it.typeSafe<Any, Any, Any, Number>(cxt) }
+                    .toTypedArray()
+                LargestSpek(*typesafeArgs)
+            }
+            register { cxt, args ->
+                val typesafeArgs = args
+                    .map { it.typeSafe<Any, Any, Any, Number>(cxt) }
+                    .toTypedArray()
+                SmallestSpek(*typesafeArgs)
+            }
+
+            coerce<Number> { _, value ->
+                value.toString().toInt()
+            }
+        }
+
+        TrellisDslVisitor.visit(spekContext, output!!)
+
+        val spek = spekContext.value as Spek<String, Boolean>
+        expect {
+            that(spek.evaluate("")).isEqualTo(expectedResult)
         }
     }
 
