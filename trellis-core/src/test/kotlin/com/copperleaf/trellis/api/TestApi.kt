@@ -16,7 +16,7 @@ class TestApi {
         val input = 1
         val spek = ValueSpek<Int, Int>(2)
 
-        expectThat(spek.evaluate(input)).isEqualTo(2)
+        expectThat(spek.evaluate(EmptyVisitor, input)).isEqualTo(2)
     }
 
     @Test
@@ -24,7 +24,7 @@ class TestApi {
         val input = 1
         val spek = CandidateSpek<Int>()
 
-        expectThat(spek.evaluate(input)).isEqualTo(1)
+        expectThat(spek.evaluate(EmptyVisitor, input)).isEqualTo(1)
     }
 
     @Test
@@ -32,8 +32,8 @@ class TestApi {
         val spek = EqualsSpek(2)
 
         expectCoroutine {
-            that(spek.evaluate(1)).isFalse()
-            that(spek.evaluate(2)).isTrue()
+            that(spek.evaluate(EmptyVisitor, 1)).isFalse()
+            that(spek.evaluate(EmptyVisitor, 2)).isTrue()
         }
     }
 
@@ -42,9 +42,9 @@ class TestApi {
         val spek = EqualsSpek(2.2)
 
         expectCoroutine {
-            that(spek.evaluate(1.0)).isFalse()
-            that(spek.evaluate(2.0)).isFalse()
-            that(spek.evaluate(2.2)).isTrue()
+            that(spek.evaluate(EmptyVisitor, 1.0)).isFalse()
+            that(spek.evaluate(EmptyVisitor, 2.0)).isFalse()
+            that(spek.evaluate(EmptyVisitor, 2.2)).isTrue()
         }
     }
 
@@ -52,19 +52,19 @@ class TestApi {
     fun testAlsoSpek() {
         expectCoroutine {
             // Test with a value
-            that(AlsoSpek<Double, Double, Boolean>(1.0, EqualsSpek(2.2)).evaluate(2.2)).isFalse()
-            that(AlsoSpek<Double, Double, Boolean>(2.0, EqualsSpek(2.2)).evaluate(2.2)).isFalse()
-            that(AlsoSpek<Double, Double, Boolean>(2.2, EqualsSpek(2.2)).evaluate(2.2)).isTrue()
+            that(AlsoSpek<Double, Double, Boolean>(1.0, EqualsSpek(2.2)).evaluate(EmptyVisitor, 2.2)).isFalse()
+            that(AlsoSpek<Double, Double, Boolean>(2.0, EqualsSpek(2.2)).evaluate(EmptyVisitor, 2.2)).isFalse()
+            that(AlsoSpek<Double, Double, Boolean>(2.2, EqualsSpek(2.2)).evaluate(EmptyVisitor, 2.2)).isTrue()
 
             // test with a lambda
-            that(AlsoSpek<Double, Double, Boolean>({1.0}, EqualsSpek(2.2)).evaluate(2.2)).isFalse()
-            that(AlsoSpek<Double, Double, Boolean>({2.0}, EqualsSpek(2.2)).evaluate(2.2)).isFalse()
-            that(AlsoSpek<Double, Double, Boolean>({2.2}, EqualsSpek(2.2)).evaluate(2.2)).isTrue()
+            that(AlsoSpek<Double, Double, Boolean>({1.0}, EqualsSpek(2.2)).evaluate(EmptyVisitor, 2.2)).isFalse()
+            that(AlsoSpek<Double, Double, Boolean>({2.0}, EqualsSpek(2.2)).evaluate(EmptyVisitor, 2.2)).isFalse()
+            that(AlsoSpek<Double, Double, Boolean>({2.2}, EqualsSpek(2.2)).evaluate(EmptyVisitor, 2.2)).isTrue()
 
             // test with a Spek
-            that(AlsoSpek<Double, Double, Boolean>(ValueSpek(1.0), EqualsSpek(2.2)).evaluate(2.2)).isFalse()
-            that(AlsoSpek<Double, Double, Boolean>(ValueSpek(2.0), EqualsSpek(2.2)).evaluate(2.2)).isFalse()
-            that(AlsoSpek<Double, Double, Boolean>(ValueSpek(2.2), EqualsSpek(2.2)).evaluate(2.2)).isTrue()
+            that(AlsoSpek<Double, Double, Boolean>(ValueSpek(1.0), EqualsSpek(2.2)).evaluate(EmptyVisitor, 2.2)).isFalse()
+            that(AlsoSpek<Double, Double, Boolean>(ValueSpek(2.0), EqualsSpek(2.2)).evaluate(EmptyVisitor, 2.2)).isFalse()
+            that(AlsoSpek<Double, Double, Boolean>(ValueSpek(2.2), EqualsSpek(2.2)).evaluate(EmptyVisitor, 2.2)).isTrue()
         }
     }
 }

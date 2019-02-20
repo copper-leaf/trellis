@@ -1,11 +1,14 @@
 package com.copperleaf.trellis.dsl
 
+import com.copperleaf.trellis.api.EmptyVisitor
 import com.copperleaf.trellis.api.IfSpek
 import com.copperleaf.trellis.api.LargestSpek
 import com.copperleaf.trellis.api.Spek
+import com.copperleaf.trellis.api.SpekVisitor
 import com.copperleaf.trellis.api.ValueSpek
 import com.copperleaf.trellis.api.plus
 import com.copperleaf.trellis.api.then
+import com.copperleaf.trellis.api.visiting
 import com.copperleaf.trellis.dsl.TrellisDslVisitor.Companion.create
 import com.copperleaf.trellis.impl.strings.BetweenDatesSpek
 import com.copperleaf.trellis.impl.strings.DateSpek
@@ -38,7 +41,7 @@ class TrellisReadmeNumericExpressionsTest {
             .plus(CouponDiscountSpek(discount = 0.1, couponCode = "friendsandfamily"))
 
         expect {
-            that(discountSpek.evaluate(user).toDouble()).isEqualTo(discountAmount, 0.01)
+            that(discountSpek.evaluate(EmptyVisitor, user).toDouble()).isEqualTo(discountAmount, 0.01)
         }
     }
 
@@ -66,7 +69,7 @@ class TrellisReadmeNumericExpressionsTest {
         )
 
         expect {
-            that(permissionSpek.evaluate(user)).isEqualTo(discountAmount, 0.01)
+            that(permissionSpek.evaluate(EmptyVisitor, user)).isEqualTo(discountAmount, 0.01)
         }
     }
 
@@ -147,7 +150,8 @@ class TrellisReadmeNumericExpressionsTest {
         }
     }
 
-    class DiscountContext(initializer: (SpekExpressionContext.() -> Unit)? = null) : SpekExpressionContext(initializer) {
+    class DiscountContext(initializer: (SpekExpressionContext.() -> Unit)? = null) :
+        SpekExpressionContext(initializer) {
 
         var currentDate: LocalDate = LocalDate.now()
 
@@ -163,18 +167,24 @@ class TrellisReadmeNumericExpressionsTest {
         Spek<Discount, Double> {
         constructor(discount: Double, yearsActive: Int) : this(ValueSpek(discount), ValueSpek(yearsActive))
 
-        override suspend fun evaluate(candidate: Discount): Double {
-            val discountAmount = discount.evaluate(candidate)
-            val requiredYearsActive = yearsActive.evaluate(candidate)
-            return if (candidate.yearsUserActive >= requiredYearsActive) discountAmount else 0.0
+        override val children = listOf(discount, yearsActive)
+
+        override suspend fun evaluate(visitor: SpekVisitor, candidate: Discount): Double {
+            return visiting(visitor) {
+                val discountAmount = discount.evaluate(visitor, candidate)
+                val requiredYearsActive = yearsActive.evaluate(visitor, candidate)
+                if (candidate.yearsUserActive >= requiredYearsActive) discountAmount else 0.0
+            }
         }
     }
 
     class PromotionDiscountSpek(private val discount: Spek<Any, Double>) : Spek<Discount, Double> {
         constructor(discount: Double) : this(ValueSpek(discount))
 
-        override suspend fun evaluate(candidate: Discount): Double {
-            return discount.evaluate(candidate)
+        override val children = listOf(discount)
+
+        override suspend fun evaluate(visitor: SpekVisitor, candidate: Discount): Double {
+            return visiting(visitor) { discount.evaluate(visitor, candidate) }
         }
     }
 
@@ -182,10 +192,14 @@ class TrellisReadmeNumericExpressionsTest {
         Spek<Discount, Double> {
         constructor(discount: Double, couponCode: String) : this(ValueSpek(discount), ValueSpek(couponCode))
 
-        override suspend fun evaluate(candidate: Discount): Double {
-            val discountAmount = discount.evaluate(candidate)
-            val requiredCouponCode = couponCode.evaluate(candidate)
-            return if (candidate.couponCode == requiredCouponCode) discountAmount else 0.0
+        override val children = listOf(discount, couponCode)
+
+        override suspend fun evaluate(visitor: SpekVisitor, candidate: Discount): Double {
+            return visiting(visitor) {
+                val discountAmount = discount.evaluate(visitor, candidate)
+                val requiredCouponCode = couponCode.evaluate(visitor, candidate)
+                if (candidate.couponCode == requiredCouponCode) discountAmount else 0.0
+            }
         }
     }
 

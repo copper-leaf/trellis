@@ -1,14 +1,19 @@
 package com.copperleaf.trellis;
 
+import com.copperleaf.trellis.api.EmptyVisitor;
 import com.copperleaf.trellis.api.JavaKt;
 import com.copperleaf.trellis.api.Spek;
+import com.copperleaf.trellis.api.SpekVisitor;
 import kotlin.Unit;
 import kotlin.coroutines.Continuation;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.Callable;
 
 import static org.awaitility.Awaitility.await;
@@ -29,7 +34,7 @@ public class TestJavaApi {
         String expected = "qwerty";
         Spek<String, Boolean> spek = new JavaEqualSpek(expected);
 
-        Boolean aBoolean = JavaKt.evaluateSync(spek, input);
+        Boolean aBoolean = JavaKt.evaluateSync(spek, EmptyVisitor.INSTANCE, input);
         assertEquals(false, aBoolean);
     }
 
@@ -39,7 +44,7 @@ public class TestJavaApi {
         String expected = "qwerty";
         Spek<String, Boolean> spek = new JavaEqualSpek(expected);
 
-        JavaKt.evaluateAsync(spek, input, new Function1<Boolean, Unit>() {
+        JavaKt.evaluateAsync(spek, EmptyVisitor.INSTANCE, input, new Function1<Boolean, Unit>() {
             @Override
             public Unit invoke(Boolean aBoolean) {
                 System.out.println("testJavaEqualSpekPassSync: " + aBoolean);
@@ -55,7 +60,7 @@ public class TestJavaApi {
         String expected = "qwerty";
         Spek<String, Boolean> spek = new JavaEqualSpek(expected);
 
-        JavaKt.evaluateAsync(spek, input, new Function1<Boolean, Unit>() {
+        JavaKt.evaluateAsync(spek, EmptyVisitor.INSTANCE, input, new Function1<Boolean, Unit>() {
             @Override
             public Unit invoke(Boolean aBoolean) {
                 assertEquals(false, aBoolean);
@@ -71,7 +76,7 @@ public class TestJavaApi {
         String expected = "qwerty";
         Spek<String, Boolean> spek = new JavaEqualSpek(expected);
 
-        JavaKt.evaluateAsync(spek, input, new Function1<Boolean, Unit>() {
+        JavaKt.evaluateAsync(spek, EmptyVisitor.INSTANCE, input, new Function1<Boolean, Unit>() {
             @Override
             public Unit invoke(Boolean aBoolean) {
                 assertEquals(true, aBoolean);
@@ -90,7 +95,7 @@ public class TestJavaApi {
         }
 
         @Override
-        public Object evaluate(String candidate, @NotNull Continuation<? super Boolean> continuation) {
+        public Object evaluate(@Nullable SpekVisitor visitor, String candidate, @NotNull Continuation<? super Boolean> continuation) {
             try {
                 Thread.sleep(5000);
             }
@@ -99,6 +104,12 @@ public class TestJavaApi {
             }
             coroutineIsCompleted = true;
             return input.equals(candidate);
+        }
+
+        @NotNull
+        @Override
+        public List<Spek<?, ?>> getChildren() {
+            return new ArrayList<Spek<?, ?>>();
         }
     }
 

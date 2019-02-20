@@ -1,13 +1,15 @@
 package com.copperleaf.trellis.impl.strings
 
 import com.copperleaf.trellis.api.Spek
+import com.copperleaf.trellis.api.SpekVisitor
 import com.copperleaf.trellis.api.ValueSpek
+import com.copperleaf.trellis.api.visiting
 import java.time.LocalDate
 
 class BetweenDatesSpek<T>(
-        private val startDate: Spek<T, LocalDate?>,
-        private val endDate: Spek<T, LocalDate?>,
-        private val targetDate: Spek<T, LocalDate>
+    private val startDate: Spek<T, LocalDate?>,
+    private val endDate: Spek<T, LocalDate?>,
+    private val targetDate: Spek<T, LocalDate>
 ) : Spek<T, Boolean> {
 
     constructor(
@@ -16,25 +18,26 @@ class BetweenDatesSpek<T>(
         targetDate: LocalDate
     ) : this(ValueSpek(startDate), ValueSpek(endDate), ValueSpek(targetDate))
 
-    override suspend fun evaluate(candidate: T): Boolean {
-        val startDateValue  = startDate.evaluate(candidate)
-        val endDateValue    = endDate.evaluate(candidate)
-        val targetDateValue = targetDate.evaluate(candidate)
+    override val children = listOf(startDate, endDate, targetDate)
 
-        val passesStartDate = if(startDateValue != null) {
-            startDateValue.isBefore(targetDateValue) || startDateValue  == targetDateValue
-        }
-        else {
-            true
-        }
-        val passesEndDate = if(endDateValue != null) {
-            endDateValue.isAfter(targetDateValue) || endDateValue  == targetDateValue
-        }
-        else {
-            true
-        }
+    override suspend fun evaluate(visitor: SpekVisitor, candidate: T): Boolean {
+        return visiting(visitor) {
+            val startDateValue = startDate.evaluate(visitor, candidate)
+            val endDateValue = endDate.evaluate(visitor, candidate)
+            val targetDateValue = targetDate.evaluate(visitor, candidate)
 
-        return passesStartDate && passesEndDate
+            val passesStartDate = if (startDateValue != null)
+                startDateValue.isBefore(targetDateValue) || startDateValue == targetDateValue
+            else
+                true
+
+            val passesEndDate = if (endDateValue != null)
+                endDateValue.isAfter(targetDateValue) || endDateValue == targetDateValue
+            else
+                true
+
+            passesStartDate && passesEndDate
+        }
     }
 }
 
@@ -44,11 +47,15 @@ class DateSpek<T>(
     private val day: Spek<T, Int>
 ) : Spek<T, LocalDate> {
 
-    override suspend fun evaluate(candidate: T): LocalDate {
-        val yearValue = year.evaluate(candidate)
-        val monthValue = month.evaluate(candidate)
-        val dayValue = day.evaluate(candidate)
+    override val children = listOf(year, month, day)
 
-        return LocalDate.of(yearValue, monthValue, dayValue)
+    override suspend fun evaluate(visitor: SpekVisitor, candidate: T): LocalDate {
+        return visiting(visitor) {
+            val yearValue = year.evaluate(visitor, candidate)
+            val monthValue = month.evaluate(visitor, candidate)
+            val dayValue = day.evaluate(visitor, candidate)
+
+            LocalDate.of(yearValue, monthValue, dayValue)
+        }
     }
 }

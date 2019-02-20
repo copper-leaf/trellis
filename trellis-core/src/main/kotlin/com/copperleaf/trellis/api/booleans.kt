@@ -19,18 +19,24 @@ operator fun <T> Spek<T, Boolean>.unaryMinus() = this.not()
 /**
  * Verifies that two speks are both true.
  */
-class AndSpek<T>(private val left: Spek<T, Boolean>, private val right: Spek<T, Boolean>) : Spek<T, Boolean> {
-    override suspend fun evaluate(candidate: T): Boolean {
-        return left.evaluate(candidate) && right.evaluate(candidate)
+class AndSpek<T>(private val lhs: Spek<T, Boolean>, private val rhs: Spek<T, Boolean>) : Spek<T, Boolean> {
+
+    override val children = listOf(lhs, rhs)
+
+    override suspend fun evaluate(visitor: SpekVisitor, candidate: T): Boolean {
+        return visiting(visitor) {  lhs.evaluate(visitor, candidate) && rhs.evaluate(visitor, candidate) }
     }
 }
 
 /**
  * Verifies that at least one of two speks are true.
  */
-class OrSpek<T>(private val left: Spek<T, Boolean>, private val right: Spek<T, Boolean>) : Spek<T, Boolean> {
-    override suspend fun evaluate(candidate: T): Boolean {
-        return left.evaluate(candidate) || right.evaluate(candidate)
+class OrSpek<T>(private val lhs: Spek<T, Boolean>, private val rhs: Spek<T, Boolean>) : Spek<T, Boolean> {
+
+    override val children = listOf(lhs, rhs)
+
+    override suspend fun evaluate(visitor: SpekVisitor, candidate: T): Boolean {
+        return visiting(visitor) { lhs.evaluate(visitor, candidate) || rhs.evaluate(visitor, candidate) }
     }
 }
 
@@ -38,8 +44,10 @@ class OrSpek<T>(private val left: Spek<T, Boolean>, private val right: Spek<T, B
  * Inverts a Boolean spek
  */
 class NotSpek<T>(private val base: Spek<T, Boolean>) : Spek<T, Boolean> {
-    override suspend fun evaluate(candidate: T): Boolean {
-        return !base.evaluate(candidate)
+
+    override val children = listOf(base)
+
+    override suspend fun evaluate(visitor: SpekVisitor, candidate: T): Boolean {
+        return visiting(visitor) { !base.evaluate(visitor, candidate) }
     }
 }
-

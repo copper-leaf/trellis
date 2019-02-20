@@ -9,17 +9,20 @@ fun <T, U> Spek<T, Boolean>.then(_then: Spek<T, U>, _else: Spek<T, U>): Spek<T, 
 //----------------------------------------------------------------------------------------------------------------------
 
 class IfSpek<T, U>(
-        private val _if: Spek<T, Boolean>,
-        private val _then: Spek<T, U>,
-        private val _else: Spek<T, U>
+    private val _if: Spek<T, Boolean>,
+    private val _then: Spek<T, U>,
+    private val _else: Spek<T, U>
 ) : Spek<T, U> {
 
-    override suspend fun evaluate(candidate: T): U {
-        return if(_if.evaluate(candidate)) {
-            _then.evaluate(candidate)
-        }
-        else {
-            _else.evaluate(candidate)
+    override val children = listOf(_if, _then, _else)
+
+    override suspend fun evaluate(visitor: SpekVisitor, candidate: T): U {
+        return visiting(visitor) {
+            if (_if.evaluate(visitor, candidate)) {
+                _then.evaluate(visitor, candidate)
+            } else {
+                _else.evaluate(visitor, candidate)
+            }
         }
     }
 }

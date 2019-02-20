@@ -17,12 +17,12 @@ class TestDates {
 
         val spek = BetweenDatesSpek(ValueSpek(startDate), ValueSpek(endDate), CandidateSpek())
 
-        expectThat(spek.evaluate(LocalDate.now())).isTrue()
-        expectThat(spek.evaluate(LocalDate.now().minusDays(10))).isFalse()
-        expectThat(spek.evaluate(LocalDate.now().plusDays(10))).isFalse()
+        expectThat(spek.evaluate(EmptyVisitor, LocalDate.now())).isTrue()
+        expectThat(spek.evaluate(EmptyVisitor, LocalDate.now().minusDays(10))).isFalse()
+        expectThat(spek.evaluate(EmptyVisitor, LocalDate.now().plusDays(10))).isFalse()
 
-        expectThat(spek.evaluate(LocalDate.now().minusDays(5))).isTrue()
-        expectThat(spek.evaluate(LocalDate.now().plusDays(5))).isTrue()
+        expectThat(spek.evaluate(EmptyVisitor, LocalDate.now().minusDays(5))).isTrue()
+        expectThat(spek.evaluate(EmptyVisitor, LocalDate.now().plusDays(5))).isTrue()
     }
 
     @Test
@@ -32,12 +32,12 @@ class TestDates {
 
         val spek = BetweenDatesSpek(ValueSpek(startDate), ValueSpek(endDate), CandidateSpek())
 
-        expectThat(spek.evaluate(LocalDate.now())).isTrue()
-        expectThat(spek.evaluate(LocalDate.now().minusDays(10))).isFalse()
-        expectThat(spek.evaluate(LocalDate.now().plusDays(10))).isTrue()
-        expectThat(spek.evaluate(LocalDate.MAX)).isTrue()
+        expectThat(spek.evaluate(EmptyVisitor, LocalDate.now())).isTrue()
+        expectThat(spek.evaluate(EmptyVisitor, LocalDate.now().minusDays(10))).isFalse()
+        expectThat(spek.evaluate(EmptyVisitor, LocalDate.now().plusDays(10))).isTrue()
+        expectThat(spek.evaluate(EmptyVisitor, LocalDate.MAX)).isTrue()
 
-        expectThat(spek.evaluate(LocalDate.now().minusDays(5))).isTrue()
+        expectThat(spek.evaluate(EmptyVisitor, LocalDate.now().minusDays(5))).isTrue()
     }
 
     @Test
@@ -47,12 +47,12 @@ class TestDates {
 
         val spek = BetweenDatesSpek(ValueSpek(startDate), ValueSpek(endDate), CandidateSpek())
 
-        expectThat(spek.evaluate(LocalDate.now())).isTrue()
-        expectThat(spek.evaluate(LocalDate.now().minusDays(10))).isTrue()
-        expectThat(spek.evaluate(LocalDate.now().plusDays(10))).isFalse()
-        expectThat(spek.evaluate(LocalDate.MIN)).isTrue()
+        expectThat(spek.evaluate(EmptyVisitor, LocalDate.now())).isTrue()
+        expectThat(spek.evaluate(EmptyVisitor, LocalDate.now().minusDays(10))).isTrue()
+        expectThat(spek.evaluate(EmptyVisitor, LocalDate.now().plusDays(10))).isFalse()
+        expectThat(spek.evaluate(EmptyVisitor, LocalDate.MIN)).isTrue()
 
-        expectThat(spek.evaluate(LocalDate.now().plusDays(5))).isTrue()
+        expectThat(spek.evaluate(EmptyVisitor, LocalDate.now().plusDays(5))).isTrue()
     }
 
 

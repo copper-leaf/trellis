@@ -4,6 +4,8 @@ package com.copperleaf.trellis.dsl
 
 import com.copperleaf.kudzu.parser.ExpressionContext
 import com.copperleaf.trellis.api.Spek
+import com.copperleaf.trellis.api.SpekVisitor
+import com.copperleaf.trellis.api.visiting
 import kotlin.reflect.KClass
 
 
@@ -64,13 +66,18 @@ class TypeSafeSpek<BC, BR, C, R>(
     private val rClass: Class<R>,
     private val base: Spek<BC, BR>
 ) : Spek<C, R> {
-    override suspend fun evaluate(candidate: C): R {
-        val unknownCandidate = coerce(bcClass, candidate) ?: default(bcClass)
-        val typedCandidate: BC = unknownCandidate
-        val untypedResult = base.evaluate(typedCandidate)
-        val typedResult: R = coerce(rClass, untypedResult) ?: default(rClass)
 
-        return typedResult
+    override val children = listOf(base)
+
+    override suspend fun evaluate(visitor: SpekVisitor, candidate: C): R {
+        return visiting(visitor) {
+            val unknownCandidate = coerce(bcClass, candidate) ?: default(bcClass)
+            val typedCandidate: BC = unknownCandidate
+            val untypedResult = base.evaluate(visitor, typedCandidate)
+            val typedResult: R = coerce(rClass, untypedResult) ?: default(rClass)
+
+            typedResult
+        }
     }
 
     private fun <T, U> coerce(
@@ -122,7 +129,6 @@ class TypeSafeSpek<BC, BR, C, R>(
         return "TypeSafeSpek Converts from ${base.javaClass.simpleName}<${bcClass.simpleName}, ${brClass.simpleName}> to TypeSafeSpek<${cClass.simpleName}, ${rClass.simpleName}>)"
     }
 
-
 }
 
 inline fun <reified BC, reified BR, reified C, reified R> Spek<*, *>.typeSafe(context: SpekExpressionContext): Spek<C, R> {
@@ -137,166 +143,3 @@ inline fun <reified BC, reified BR, reified C, reified R> Spek<*, *>.typeSafe(co
 }
 
 
-/*
-
-
-eval type-safe spek
-        coercing [Discount(username=thatGuy01, yearsUserActive=1, couponCode=null)] using {Object} to itself
-    unknownCandidate=Discount(username=thatGuy01, yearsUserActive=1, couponCode=null)
-    typedCandidate=Discount(username=thatGuy01, yearsUserActive=1, couponCode=null) (bc=Object)
-
-    eval type-safe spek
-            coercing [Discount(username=thatGuy01, yearsUserActive=1, couponCode=null)] using {Object} to itself
-        unknownCandidate=Discount(username=thatGuy01, yearsUserActive=1, couponCode=null)
-        typedCandidate=Discount(username=thatGuy01, yearsUserActive=1, couponCode=null) (bc=Object)
-        untypedResult=0.1 (br=Object)
-            coercing [0.1] using {Double} to double
-        typedResult=0.1 (r=Double)
-
-
-
-    eval type-safe spek
-            coercing [Discount(username=thatGuy01, yearsUserActive=1, couponCode=null)] using {Object} to itself
-        unknownCandidate=Discount(username=thatGuy01, yearsUserActive=1, couponCode=null)
-        typedCandidate=Discount(username=thatGuy01, yearsUserActive=1, couponCode=null) (bc=Object)
-        untypedResult=1 (br=Object)
-            coercing [1] using {Integer} to integer
-        typedResult=1 (r=Integer)
-
-untypedResult=0.1 (br=Object)
-    coercing [0.1] using {Number} to number
-typedResult=0.1 (r=Number)
-
-
-
-eval type-safe spek
-        coercing [Discount(username=thatGuy01, yearsUserActive=1, couponCode=null)] using {Object} to itself
-    unknownCandidate=Discount(username=thatGuy01, yearsUserActive=1, couponCode=null)
-    typedCandidate=Discount(username=thatGuy01, yearsUserActive=1, couponCode=null) (bc=Object)
-
-    eval type-safe spek
-            coercing [Discount(username=thatGuy01, yearsUserActive=1, couponCode=null)] using {Object} to itself
-        unknownCandidate=Discount(username=thatGuy01, yearsUserActive=1, couponCode=null)
-        typedCandidate=Discount(username=thatGuy01, yearsUserActive=1, couponCode=null) (bc=Object)
-        untypedResult=0.15 (br=Object)
-            coercing [0.15] using {Double} to double
-        typedResult=0.15 (r=Double)
-
-    eval type-safe spek
-            coercing [Discount(username=thatGuy01, yearsUserActive=1, couponCode=null)] using {Object} to itself
-        unknownCandidate=Discount(username=thatGuy01, yearsUserActive=1, couponCode=null)
-        typedCandidate=Discount(username=thatGuy01, yearsUserActive=1, couponCode=null) (bc=Object)
-        untypedResult=2 (br=Object)
-            coercing [2] using {Integer} to integer
-        typedResult=2 (r=Integer)
-
-untypedResult=0.0 (br=Object)
-    coercing [0.0] using {Number} to number
-typedResult=0.0 (r=Number)
-
-
-
-eval type-safe spek
-        coercing [Discount(username=thatGuy01, yearsUserActive=1, couponCode=null)] using {Object} to itself
-    unknownCandidate=Discount(username=thatGuy01, yearsUserActive=1, couponCode=null)
-    typedCandidate=Discount(username=thatGuy01, yearsUserActive=1, couponCode=null) (bc=Object)
-
-    eval type-safe spek
-            coercing [Discount(username=thatGuy01, yearsUserActive=1, couponCode=null)] using {Object} to itself
-        unknownCandidate=Discount(username=thatGuy01, yearsUserActive=1, couponCode=null)
-        typedCandidate=Discount(username=thatGuy01, yearsUserActive=1, couponCode=null) (bc=Object)
-        untypedResult=0.25 (br=Object)
-            coercing [0.25] using {Double} to double
-        typedResult=0.25 (r=Double)
-
-    eval type-safe spek
-            coercing [Discount(username=thatGuy01, yearsUserActive=1, couponCode=null)] using {Object} to itself
-        unknownCandidate=Discount(username=thatGuy01, yearsUserActive=1, couponCode=null)
-        typedCandidate=Discount(username=thatGuy01, yearsUserActive=1, couponCode=null) (bc=Object)
-        untypedResult=5 (br=Object)
-            coercing [5] using {Integer} to integer
-        typedResult=5 (r=Integer)
-
-untypedResult=0.0 (br=Object)
-    coercing [0.0] using {Number} to number
-typedResult=0.0 (r=Number)
-
-
-
-eval type-safe spek
-        coercing [Discount(username=thatGuy01, yearsUserActive=1, couponCode=null)] using {Object} to itself
-    unknownCandidate=Discount(username=thatGuy01, yearsUserActive=1, couponCode=null)
-    typedCandidate=Discount(username=thatGuy01, yearsUserActive=1, couponCode=null) (bc=Object)
-
-    eval type-safe spek
-            coercing [Discount(username=thatGuy01, yearsUserActive=1, couponCode=null)] using {Object} to itself
-        unknownCandidate=Discount(username=thatGuy01, yearsUserActive=1, couponCode=null)
-        typedCandidate=Discount(username=thatGuy01, yearsUserActive=1, couponCode=null) (bc=Object)
-
-        eval type-safe spek
-                coercing [Discount(username=thatGuy01, yearsUserActive=1, couponCode=null)] using {Object} to itself
-            unknownCandidate=Discount(username=thatGuy01, yearsUserActive=1, couponCode=null)
-            typedCandidate=Discount(username=thatGuy01, yearsUserActive=1, couponCode=null) (bc=Object)
-            untypedResult=2018 (br=Object)
-                coercing [2018] using {Integer} to integer
-            typedResult=2018 (r=Integer)
-
-        eval type-safe spek
-                coercing [Discount(username=thatGuy01, yearsUserActive=1, couponCode=null)] using {Object} to itself
-            unknownCandidate=Discount(username=thatGuy01, yearsUserActive=1, couponCode=null)
-            typedCandidate=Discount(username=thatGuy01, yearsUserActive=1, couponCode=null) (bc=Object)
-            untypedResult=8 (br=Object)
-                coercing [8] using {Integer} to integer
-            typedResult=8 (r=Integer)
-
-        eval type-safe spek
-                coercing [Discount(username=thatGuy01, yearsUserActive=1, couponCode=null)] using {Object} to itself
-            unknownCandidate=Discount(username=thatGuy01, yearsUserActive=1, couponCode=null)
-            typedCandidate=Discount(username=thatGuy01, yearsUserActive=1, couponCode=null) (bc=Object)
-            untypedResult=1 (br=Object)
-                coercing [1] using {Integer} to integer
-            typedResult=1 (r=Integer)
-
-    untypedResult=2018-08-01 (br=Object)
-    typedResult=2018-08-01 (r=LocalDate)
-
-    eval type-safe spek
-            coercing [Discount(username=thatGuy01, yearsUserActive=1, couponCode=null)] using {Object} to itself
-        unknownCandidate=Discount(username=thatGuy01, yearsUserActive=1, couponCode=null)
-        typedCandidate=Discount(username=thatGuy01, yearsUserActive=1, couponCode=null) (bc=Object)
-
-        eval type-safe spek
-                coercing [Discount(username=thatGuy01, yearsUserActive=1, couponCode=null)] using {Object} to itself
-            unknownCandidate=Discount(username=thatGuy01, yearsUserActive=1, couponCode=null)
-            typedCandidate=Discount(username=thatGuy01, yearsUserActive=1, couponCode=null) (bc=Object)
-            untypedResult=2018 (br=Object)
-                coercing [2018] using {Integer} to integer
-            typedResult=2018 (r=Integer)
-
-        eval type-safe spek
-                coercing [Discount(username=thatGuy01, yearsUserActive=1, couponCode=null)] using {Object} to itself
-            unknownCandidate=Discount(username=thatGuy01, yearsUserActive=1, couponCode=null)
-            typedCandidate=Discount(username=thatGuy01, yearsUserActive=1, couponCode=null) (bc=Object)
-            untypedResult=8 (br=Object)
-                coercing [8] using {Integer} to integer
-            typedResult=8 (r=Integer)
-
-        eval type-safe spek
-                coercing [Discount(username=thatGuy01, yearsUserActive=1, couponCode=null)] using {Object} to itself
-            unknownCandidate=Discount(username=thatGuy01, yearsUserActive=1, couponCode=null)
-            typedCandidate=Discount(username=thatGuy01, yearsUserActive=1, couponCode=null) (bc=Object)
-            untypedResult=31 (br=Object)
-                coercing [31] using {Integer} to integer
-            typedResult=31 (r=Integer)
-
-    untypedResult=2018-08-31 (br=Object)
-    typedResult=2018-08-31 (r=LocalDate)
-
-untypedResult=false (br=Object)
-    coercing [false] using {Number} to number
-
-java.lang.NumberFormatException: For input string: "false"
-
-
-
- */

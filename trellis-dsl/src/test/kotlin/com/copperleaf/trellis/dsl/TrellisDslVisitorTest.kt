@@ -1,5 +1,6 @@
 package com.copperleaf.trellis.dsl
 
+import com.copperleaf.trellis.api.EmptyVisitor
 import com.copperleaf.trellis.api.LargestSpek
 import com.copperleaf.trellis.api.SmallestSpek
 import com.copperleaf.trellis.api.Spek
@@ -49,7 +50,7 @@ class TrellisDslVisitorTest {
 
         val spek = spekContext.value as Spek<String, Boolean>
         expect {
-            that(spek.evaluate(candidate)).isEqualTo(expectedSuccess)
+            that(spek.evaluate(EmptyVisitor, candidate)).isEqualTo(expectedSuccess)
         }
     }
 
@@ -81,7 +82,7 @@ class TrellisDslVisitorTest {
 
         val spek = spekContext.value as Spek<String, Boolean>
         expect {
-            that(catching { spek.evaluate(candidate) })
+            that(catching { spek.evaluate(EmptyVisitor, candidate) })
                 .isNotNull()
                 .isA<ClassCastException>()
         }
@@ -123,7 +124,7 @@ class TrellisDslVisitorTest {
 
         val spek = spekContext.value as Spek<String, Number>
         expect {
-            that(spek.evaluate(candidate)).isEqualTo(expectedResult)
+            that(spek.evaluate(EmptyVisitor, candidate)).isEqualTo(expectedResult)
         }
     }
 
@@ -186,7 +187,7 @@ class TrellisDslVisitorTest {
 
         val spek = spekContext.value as Spek<String, Boolean>
         expect {
-            that(spek.evaluate("")).isEqualTo(expectedResult)
+            that(spek.evaluate(EmptyVisitor, "")).isEqualTo(expectedResult)
         }
     }
 

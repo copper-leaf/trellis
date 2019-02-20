@@ -11,8 +11,8 @@ class TestConditionals {
     fun testIf() = runBlocking<Unit> {
         val spek = CandidateSpek<Boolean>().then(ValueSpek("pass"), ValueSpek("fail"))
 
-        expectThat(spek.evaluate(true)).isEqualTo("pass")
-        expectThat(spek.evaluate(false)).isEqualTo("fail")
+        expectThat(spek.evaluate(EmptyVisitor, true)).isEqualTo("pass")
+        expectThat(spek.evaluate(EmptyVisitor, false)).isEqualTo("fail")
     }
 
 }

@@ -6,105 +6,155 @@ operator fun <T> Spek<T, Number>.plus(other: Number) = AddSpek(this, ValueSpek(o
 operator fun <T> Spek<T, Number>.minus(other: Spek<T, Number>) = SubtractSpek(this, other)
 operator fun <T> Spek<T, Number>.minus(other: Number) = SubtractSpek(this, ValueSpek(other))
 
-class AddSpek<T>(private val left: Spek<T, out Number>, private val right: Spek<T, out Number>) : Spek<T, Number> {
-    override suspend fun evaluate(candidate: T): Number {
-        return left.evaluate(candidate).toDouble() + right.evaluate(candidate).toDouble()
+class AddSpek<T>(private val lhs: Spek<T, out Number>, private val rhs: Spek<T, out Number>) :
+    Spek<T, Number> {
+
+    override val children = listOf(lhs, rhs)
+
+    override suspend fun evaluate(visitor: SpekVisitor, candidate: T): Number {
+        return visiting(visitor) {
+            lhs.evaluate(visitor, candidate).toDouble() + rhs.evaluate(visitor, candidate).toDouble()
+        }
     }
 }
 
-class SubtractSpek<T>(private val left: Spek<T, Number>, private val right: Spek<T, Number>) : Spek<T, Number> {
-    override suspend fun evaluate(candidate: T): Number {
-        return left.evaluate(candidate).toDouble() - right.evaluate(candidate).toDouble()
+class SubtractSpek<T>(private val lhs: Spek<T, Number>, private val rhs: Spek<T, Number>) : Spek<T, Number> {
+
+    override val children = listOf(lhs, rhs)
+
+    override suspend fun evaluate(visitor: SpekVisitor, candidate: T): Number {
+        return visiting(visitor) {
+            lhs.evaluate(visitor, candidate).toDouble() - rhs.evaluate(visitor, candidate).toDouble()
+        }
     }
 }
 
-class MultiplySpek<T>(private val left: Spek<T, out Number>, private val right: Spek<T, out Number>) : Spek<T, Number> {
-    override suspend fun evaluate(candidate: T): Number {
-        return left.evaluate(candidate).toDouble() * right.evaluate(candidate).toDouble()
-    }
-}
-class DivideSpek<T>(private val left: Spek<T, out Number>, private val right: Spek<T, out Number>) : Spek<T, Number> {
-    override suspend fun evaluate(candidate: T): Number {
-        return left.evaluate(candidate).toDouble() / right.evaluate(candidate).toDouble()
+class MultiplySpek<T>(private val lhs: Spek<T, out Number>, private val rhs: Spek<T, out Number>) : Spek<T, Number> {
+
+    override val children = listOf(lhs, rhs)
+
+    override suspend fun evaluate(visitor: SpekVisitor, candidate: T): Number {
+        return visiting(visitor) {
+            lhs.evaluate(visitor, candidate).toDouble() * rhs.evaluate(visitor, candidate).toDouble()
+        }
     }
 }
 
-class GreaterThanSpek(private val base: Spek<Number, Number>, private val allowEquals: Boolean = false) : Spek<Number, Boolean> {
+class DivideSpek<T>(private val lhs: Spek<T, out Number>, private val rhs: Spek<T, out Number>) : Spek<T, Number> {
+
+    override val children = listOf(lhs, rhs)
+
+    override suspend fun evaluate(visitor: SpekVisitor, candidate: T): Number {
+        return visiting(visitor) {
+            lhs.evaluate(visitor, candidate).toDouble() / rhs.evaluate(visitor, candidate).toDouble()
+        }
+    }
+}
+
+class GreaterThanSpek(private val base: Spek<Number, Number>, private val allowEquals: Boolean = false) :
+    Spek<Number, Boolean> {
     constructor(base: Number, allowEquals: Boolean = false) : this(ValueSpek(base), allowEquals)
 
-    override suspend fun evaluate(candidate: Number): Boolean {
-        if(allowEquals) {
-            return candidate.toDouble() >= base.evaluate(candidate).toDouble()
-        }
-        else {
-            return candidate.toDouble() > base.evaluate(candidate).toDouble()
-        }
-    }
-}
-class GreaterThanOperatorSpek<T>(private val lhs: Spek<T, Number>, private val rhs: Spek<T, Number>, private val allowEquals: Boolean = false) : Spek<T, Boolean> {
+    override val children = listOf(base)
 
-    override suspend fun evaluate(candidate: T): Boolean {
-        if(allowEquals) {
-            return lhs.evaluate(candidate).toDouble() >= rhs.evaluate(candidate).toDouble()
-        }
-        else {
-            return lhs.evaluate(candidate).toDouble() > rhs.evaluate(candidate).toDouble()
+    override suspend fun evaluate(visitor: SpekVisitor, candidate: Number): Boolean {
+        return visiting(visitor) {
+            if (allowEquals) {
+                candidate.toDouble() >= base.evaluate(visitor, candidate).toDouble()
+            } else {
+                candidate.toDouble() > base.evaluate(visitor, candidate).toDouble()
+            }
         }
     }
 }
 
-class LessThanSpek(private val base: Spek<Number, Number>, private val allowEquals: Boolean = false) : Spek<Number, Boolean> {
+class GreaterThanOperatorSpek<T>(
+    private val lhs: Spek<T, Number>,
+    private val rhs: Spek<T, Number>,
+    private val allowEquals: Boolean = false
+) : Spek<T, Boolean> {
+
+    override val children = listOf(lhs, rhs)
+
+    override suspend fun evaluate(visitor: SpekVisitor, candidate: T): Boolean {
+        return visiting(visitor) {
+            if (allowEquals) {
+                lhs.evaluate(visitor, candidate).toDouble() >= rhs.evaluate(visitor, candidate).toDouble()
+            } else {
+                lhs.evaluate(visitor, candidate).toDouble() > rhs.evaluate(visitor, candidate).toDouble()
+            }
+        }
+    }
+}
+
+class LessThanSpek(private val base: Spek<Number, Number>, private val allowEquals: Boolean = false) :
+    Spek<Number, Boolean> {
     constructor(base: Number, allowEquals: Boolean = false) : this(ValueSpek(base), allowEquals)
 
-    override suspend fun evaluate(candidate: Number): Boolean {
-        if(allowEquals) {
-            return candidate.toDouble() <= base.evaluate(candidate).toDouble()
-        }
-        else {
-            return candidate.toDouble() < base.evaluate(candidate).toDouble()
+    override val children = listOf(base)
+
+    override suspend fun evaluate(visitor: SpekVisitor, candidate: Number): Boolean {
+        return visiting(visitor) {
+            if (allowEquals) {
+                candidate.toDouble() <= base.evaluate(visitor, candidate).toDouble()
+            } else {
+                candidate.toDouble() < base.evaluate(visitor, candidate).toDouble()
+            }
         }
     }
 }
-class LessThanOperatorSpek<T>(private val lhs: Spek<T, Number>, private val rhs: Spek<T, Number>, private val allowEquals: Boolean = false) : Spek<T, Boolean> {
 
-    override suspend fun evaluate(candidate: T): Boolean {
-        if(allowEquals) {
-            return lhs.evaluate(candidate).toDouble() <= rhs.evaluate(candidate).toDouble()
-        }
-        else {
-            return lhs.evaluate(candidate).toDouble() < rhs.evaluate(candidate).toDouble()
+class LessThanOperatorSpek<T>(
+    private val lhs: Spek<T, Number>,
+    private val rhs: Spek<T, Number>,
+    private val allowEquals: Boolean = false
+) : Spek<T, Boolean> {
+
+    override val children = listOf(lhs, rhs)
+
+    override suspend fun evaluate(visitor: SpekVisitor, candidate: T): Boolean {
+        return visiting(visitor) {
+            if (allowEquals) {
+                lhs.evaluate(visitor, candidate).toDouble() <= rhs.evaluate(visitor, candidate).toDouble()
+            } else {
+                lhs.evaluate(visitor, candidate).toDouble() < rhs.evaluate(visitor, candidate).toDouble()
+            }
         }
     }
 }
 
 class LargestSpek<T>(private vararg val bases: Spek<T, out Number>) : Spek<T, Number> {
 
-    override suspend fun evaluate(candidate: T): Number {
-        var largest = bases.asList().first().evaluate(candidate)
+    override val children = bases.toList()
 
-        for(base in bases.asList().drop(1)) {
-            val tempValue = base.evaluate(candidate)
-            if(tempValue.toDouble() > largest.toDouble()) {
+    override suspend fun evaluate(visitor: SpekVisitor, candidate: T): Number {
+        var largest = bases.asList().first().evaluate(visitor, candidate)
+
+        for (base in bases.asList().drop(1)) {
+            val tempValue = base.evaluate(visitor, candidate)
+            if (tempValue.toDouble() > largest.toDouble()) {
                 largest = tempValue
             }
         }
 
-        return largest
+        return visiting(visitor) { largest }
     }
 }
 
 class SmallestSpek<T>(private vararg val bases: Spek<T, Number>) : Spek<T, Number> {
 
-    override suspend fun evaluate(candidate: T): Number {
-        var smallest = bases.asList().first().evaluate(candidate)
+    override val children = bases.toList()
 
-        for(base in bases.asList().drop(1)) {
-            val tempValue = base.evaluate(candidate)
-            if(tempValue.toDouble() < smallest.toDouble()) {
+    override suspend fun evaluate(visitor: SpekVisitor, candidate: T): Number {
+        var smallest = bases.asList().first().evaluate(visitor, candidate)
+
+        for (base in bases.asList().drop(1)) {
+            val tempValue = base.evaluate(visitor, candidate)
+            if (tempValue.toDouble() < smallest.toDouble()) {
                 smallest = tempValue
             }
         }
 
-        return smallest
+        return visiting(visitor) { smallest }
     }
 }
