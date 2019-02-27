@@ -22,12 +22,14 @@ import strikt.assertions.isTrue
 class TestMatching {
 
     lateinit private var spek: Spek<String, Boolean>
-    private var onUpdateCallsMade = 0
+    private var onNodeFoundUpdateCallsMade = 0
+    private var onNodeHitUpdateCallsMade = 0
 
     @BeforeEach
     internal fun setUp() {
         spek = MinLengthSpek(6).named("MinLength") and MaxLengthSpek(12).named("MaxLength")
-        onUpdateCallsMade = 0
+        onNodeFoundUpdateCallsMade = 0
+        onNodeHitUpdateCallsMade = 0
     }
 
     @Test
@@ -36,7 +38,8 @@ class TestMatching {
 
         val matchResult = spek.match(input) {
             filter { it is NamedSpek }
-            onUpdate { onUpdateCallsMade++ }
+            onNodeFound { onNodeFoundUpdateCallsMade++ }
+            onNodeHit { onNodeHitUpdateCallsMade++ }
         }
 
         expectThat(matchResult.matches)
@@ -55,7 +58,9 @@ class TestMatching {
                 forEach { println(it) }
             } }
 
-        expectThat(onUpdateCallsMade)
+        expectThat(onNodeFoundUpdateCallsMade)
+            .isEqualTo(2)
+        expectThat(onNodeHitUpdateCallsMade)
             .isEqualTo(2)
     }
 
@@ -65,7 +70,8 @@ class TestMatching {
 
         val matchResult = spek.match(input) {
             filter { it is NamedSpek }
-            onUpdate { onUpdateCallsMade++ }
+            onNodeFound { onNodeFoundUpdateCallsMade++ }
+            onNodeHit { onNodeHitUpdateCallsMade++ }
         }
 
         expectThat(matchResult.matches)
@@ -88,7 +94,9 @@ class TestMatching {
                 forEach { println(it) }
             } }
 
-        expectThat(onUpdateCallsMade)
+        expectThat(onNodeFoundUpdateCallsMade)
+            .isEqualTo(2)
+        expectThat(onNodeHitUpdateCallsMade)
             .isEqualTo(1)
     }
 

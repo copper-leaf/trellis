@@ -15,6 +15,7 @@ suspend fun <T, U> Spek<T, U>.match(candidate: T, onStart: (SpekMatcher<U>.() ->
     }
 
     innerVisitor.exploring = false
+    matcher.onExplorationCompleteCallback?.invoke(innerVisitor.matches)
     val result = this.evaluate(innerVisitor, candidate)
 
     matcher.result = result
@@ -38,14 +39,16 @@ class MatchingVisitor(
     override fun <U> leave(candidate: Spek<*, *>, result: U) {
         if (exploring) {
             if (matcher.matchFilter == null || matcher.matchFilter!!.invoke(candidate)) {
-                matches.add(SpekMatch(candidate, depth, candidate.children.isEmpty()))
+                matches.add(SpekMatch(candidate, depth, candidate.children.isEmpty()).also {
+                    matcher.onNodeFoundCallback?.invoke(it)
+                })
             }
         } else {
             if (matcher.matchFilter == null || matcher.matchFilter!!.invoke(candidate)) {
                 matches.single { it.spek === candidate }.also {
                     it.hit = true
                     it.result = result
-                    matcher.onUpdateCallback?.invoke(it)
+                    matcher.onNodeHitCallback?.invoke(it)
                 }
             }
         }
@@ -68,11 +71,21 @@ class SpekMatcher<U> {
     var result: U? = null
     var matches: List<SpekMatch>? = null
 
-    internal var onUpdateCallback: ((SpekMatch) -> Unit)? = null
+    internal var onNodeFoundCallback: ((SpekMatch) -> Unit)? = null
+    internal var onExplorationCompleteCallback: ((List<SpekMatch>) -> Unit)? = null
+    internal var onNodeHitCallback: ((SpekMatch) -> Unit)? = null
     internal var matchFilter: ((Spek<*, *>) -> Boolean)? = null
 
-    fun onUpdate(cb: (SpekMatch) -> Unit) {
-        onUpdateCallback = cb
+    fun onNodeFound(cb: (SpekMatch) -> Unit) {
+        onNodeFoundCallback = cb
+    }
+
+    fun onExplorationComplete(cb: (List<SpekMatch>) -> Unit) {
+        onExplorationCompleteCallback = cb
+    }
+
+    fun onNodeHit(cb: (SpekMatch) -> Unit) {
+        onNodeHitCallback = cb
     }
 
     fun filter(cb: (Spek<*, *>) -> Boolean) {
