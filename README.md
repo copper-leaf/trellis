@@ -18,12 +18,12 @@ needed to validate these constraints are often the result of API calls or databa
 asynchronously. The result is a mess of callbacks and spaghetti code that is not typically managed well and ends up 
 being repeated throughout the application, which makes it difficult to maintain.
 
-_Specifikation_ provides a small type-safe interface for building objects which encapsulate and validate business logic, 
-and a fluent API for combining these smaller specs into larger, more complex specs. The result is that multiple 
-conditions can be implemented as needed, but evaluating the complex spec is just the same as evaluating a small spec:
-just pass the object to test and a callback will eventually give you the result. And since the building and testing of 
-the spec is now separated from the code that needs to validate against the spec, you can now dynamically build the spec
-and inject it with an IoC container, giving you a clean separation of concerns in your code.
+_Trellis_ provides a small type-safe interface for building objects which encapsulate and validate business logic, and a 
+fluent API for combining these smaller specs into larger, more complex specs. The result is that multiple conditions can 
+be implemented as needed, but evaluating the complex spec is just the same as evaluating a small spec: just pass the 
+object to test and a callback will eventually give you the result. And since the building and testing of the spec is now 
+separated from the code that needs to validate against the spec, you can now dynamically build the spec and inject it 
+with an IoC container, giving you a clean separation of concerns in your code.
 
 Common use cases are for evaluating boolean logic, and for computing complex numeric logic. 
 
@@ -33,7 +33,7 @@ A `Spek` is any object that implements the following interface:
 
 ```kotlin
 interface Spek<T, U> {
-    suspend fun evaluate(candidate: T): U
+    suspend fun evaluate(visitor: SpekVisitor, candidate: T): U
 }
 ```
 
@@ -43,12 +43,12 @@ interface is similar, but a callback is used instead of a return type:
 
 ```java
 public interface Spek<T, U> {
-    void evaluate(T input, Continuation<U> callback);
+    void evaluate(SpekVisitor visitor, T input, Continuation<U> callback);
 }
 ```
 
-There are 3 other important classes which may be of use when chaining speks together, the `ValueSpek`, the `ReturnSpek`, 
-and the `EqualsSpek`. 
+There are 3 other important classes which may be of use when chaining speks together, the `ValueSpek`, the 
+`CandidateSpek`, and the `EqualsSpek`. 
 
 `ValueSpek` wraps a single value passed to its constructor, and the `evaluate()` method just returns that value. This is
 useful for parameterizing your spec, so that thresholds can be set without changing the spec model itself, and so give
@@ -189,6 +189,63 @@ public final class ValueSpek<T, U> implements Spek<T, U> {
     }
 }
 ```
+
+## Introspection
+
+### SpekVisitors
+
+Until now, we have not mentioned the first parameter of the `Spek.evaluate(...)` method. It is a 
+[GOF Visitor](https://en.wikipedia.org/wiki/Visitor_pattern) that is passed through all Speks as they do their 
+processing, allowing you to receive events as the Spek tree is evaluated. Here is the full Visitor API:
+
+```kotlin
+interface SpekVisitor {
+    fun enter(candidate: Spek<*, *>)
+    fun <U> leave(candidate: Spek<*, *>, result: U)
+}
+```
+
+The visitor receives the `enter()` event as the very first call in every Spek's `evaluate()` function, and `leave()` as
+the very last call. In both cases you receive the Spek firing the event, and when leaving you also receive the value it
+is returning, so you can inspect the state of sub-trees of the full Spek object.
+
+There are a few handy Visitors built-in for your use: the `EmptyVisitor` singleton, the `PrintVisitor` class, and the
+`VisitorFilter` class.
+
+`EmptyVisitor` does nothing, simply discarding the events as they are received.
+
+`PrintVisitor` will log the events and track the nesting of each Spek, showing a nicely-formatted tree. By default it 
+logs to `System.out`, but on creation you can configure it to any `PrintStream` to capture the output.
+
+`VisitorFilter` accepts another Visitor and a callback predicate as parameters. Only if the predicate succeeds will the 
+event be passed through to the Visitor it wraps, so you can filter out inner nodes and things like that, for example.
+
+The usage of any of these is the same: `val result = spek.evaluate(visitor, candidate)` 
+
+### SpekMatcher
+
+A natural extension of the Visitor API is to use it to determine which nodes were actually hit during the process of 
+evaluating the tree. For example, a boolean expression will fail-fast and ignore sub-trees of the Spek, but it would be
+nice to _know_ which sub-trees were not evaluated. Matchers will provide you with this information.
+
+Is essentially has two steps: the first step "explores" the Spek tree, recursively locating the children of each Spek 
+until all nodes have been explored. Then, as the Spek is being evaluated, a Visitor can match the events received with
+the nodes that it previously explored. After the evaluation is complete, you will be left with a `SpekMatcher` 
+containing a list of all Nodes that were discovered, and related metadata about whether it was evaluated or not and its
+result. 
+
+Usage looks like the following. Basically, instead of calling `spek.evaluate(...)`, call the `spek.match()` extension
+method. Instead of returning the result, you will receive back the `SpekMatcher`:
+
+```kotlin
+val matchResult = spek.match(input) {
+    filter { it.children.isEmpty() } // only match leaf nodes
+    onNodeFound { }                  // Receive an additional event whenever a node is discovered in the exploration phase
+    onNodeHit   { }                  // Receive an additional event whenever a node is hit in the evaluation phase
+}
+val result = matchResult.result // the value returned from the Spek
+val matches = matchResult.matches // a list of matched Speks and metadata
+``` 
 
 ## Notes
 

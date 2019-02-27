@@ -1,6 +1,7 @@
 package com.copperleaf.trellis.introspection.visitor
 
 import com.copperleaf.trellis.api.Spek
+import java.io.PrintStream
 
 fun Spek<*, *>.explore(visitor: SpekVisitor) {
     exploring(visitor) {
@@ -36,18 +37,18 @@ object EmptyVisitor : SpekVisitor {
 /**
  * A simple Visitor which simply prints the name of the Spek being visited and its result.
  */
-class PrintVisitor : SpekVisitor {
+class PrintVisitor(var out: PrintStream = System.out) : SpekVisitor {
 
     private var depth: Int = 0
 
     override fun enter(candidate: Spek<*, *>) {
-        println("${indent(depth)}entering leaving $candidate")
+        out.println("${indent(depth)}entering leaving $candidate")
         depth++
     }
 
     override fun <U> leave(candidate: Spek<*, *>, result: U) {
         depth--
-        println("${indent(depth)}leaving $candidate returned $result")
+        out.println("${indent(depth)}leaving $candidate returned $result")
     }
 
     private fun indent(currentIndent: Int): String {
