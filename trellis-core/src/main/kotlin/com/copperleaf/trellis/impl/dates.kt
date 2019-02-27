@@ -1,9 +1,8 @@
-package com.copperleaf.trellis.impl.strings
+package com.copperleaf.trellis.impl
 
 import com.copperleaf.trellis.api.Spek
-import com.copperleaf.trellis.api.SpekVisitor
-import com.copperleaf.trellis.api.ValueSpek
-import com.copperleaf.trellis.api.visiting
+import com.copperleaf.trellis.introspection.visitor.SpekVisitor
+import com.copperleaf.trellis.introspection.visitor.visiting
 import java.time.LocalDate
 
 class BetweenDatesSpek<T>(

@@ -1,4 +1,5 @@
-package com.copperleaf.trellis.dsl
+@file:Suppress("UNCHECKED_CAST")
+package com.copperleaf.trellis.dsl.parser
 
 import com.copperleaf.kudzu.Node
 import com.copperleaf.kudzu.ParserContext
@@ -13,9 +14,7 @@ import com.copperleaf.kudzu.parser.OptionalWhitespaceParser
 import com.copperleaf.kudzu.parser.ScanParser
 import com.copperleaf.kudzu.parser.SequenceParser
 import com.copperleaf.kudzu.parser.TokenParser
-import com.copperleaf.trellis.dsl.TrellisDslOperators.Companion.operators
 
-@Suppress("UNCHECKED_CAST")
 class TrellisDslParser {
 
     companion object {
@@ -31,7 +30,7 @@ class TrellisDslParser {
         val spekExpressionTerm = LazyParser()
         val spekExpression = LazyParser()
 
-        internal val ws = OptionalWhitespaceParser()
+        private val ws = OptionalWhitespaceParser()
         private val spekNameParser = ChoiceParser(
             SequenceParser(
                 CharInParser('\''),

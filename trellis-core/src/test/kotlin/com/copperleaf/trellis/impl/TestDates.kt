@@ -1,6 +1,9 @@
-package com.copperleaf.trellis.api
+package com.copperleaf.trellis.impl
 
-import com.copperleaf.trellis.impl.strings.BetweenDatesSpek
+import com.copperleaf.trellis.impl.BetweenDatesSpek
+import com.copperleaf.trellis.impl.CandidateSpek
+import com.copperleaf.trellis.impl.ValueSpek
+import com.copperleaf.trellis.introspection.visitor.EmptyVisitor
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
@@ -15,7 +18,8 @@ class TestDates {
         val startDate = LocalDate.now().minusDays(5)
         val endDate = LocalDate.now().plusDays(5)
 
-        val spek = BetweenDatesSpek(ValueSpek(startDate), ValueSpek(endDate), CandidateSpek())
+        val spek =
+            BetweenDatesSpek(ValueSpek(startDate), ValueSpek(endDate), CandidateSpek())
 
         expectThat(spek.evaluate(EmptyVisitor, LocalDate.now())).isTrue()
         expectThat(spek.evaluate(EmptyVisitor, LocalDate.now().minusDays(10))).isFalse()
@@ -30,7 +34,8 @@ class TestDates {
         val startDate = LocalDate.now().minusDays(5)
         val endDate: LocalDate? = null
 
-        val spek = BetweenDatesSpek(ValueSpek(startDate), ValueSpek(endDate), CandidateSpek())
+        val spek =
+            BetweenDatesSpek(ValueSpek(startDate), ValueSpek(endDate), CandidateSpek())
 
         expectThat(spek.evaluate(EmptyVisitor, LocalDate.now())).isTrue()
         expectThat(spek.evaluate(EmptyVisitor, LocalDate.now().minusDays(10))).isFalse()
@@ -45,7 +50,8 @@ class TestDates {
         val startDate: LocalDate? = null
         val endDate = LocalDate.now().plusDays(5)
 
-        val spek = BetweenDatesSpek(ValueSpek(startDate), ValueSpek(endDate), CandidateSpek())
+        val spek =
+            BetweenDatesSpek(ValueSpek(startDate), ValueSpek(endDate), CandidateSpek())
 
         expectThat(spek.evaluate(EmptyVisitor, LocalDate.now())).isTrue()
         expectThat(spek.evaluate(EmptyVisitor, LocalDate.now().minusDays(10))).isTrue()

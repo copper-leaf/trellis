@@ -1,4 +1,5 @@
-package com.copperleaf.trellis.dsl
+@file:Suppress("UNCHECKED_CAST")
+package com.copperleaf.trellis.dsl.visitor
 
 import com.copperleaf.kudzu.Node
 import com.copperleaf.kudzu.ParserContext
@@ -15,14 +16,19 @@ import com.copperleaf.kudzu.parser.NamedNode
 import com.copperleaf.kudzu.parser.ScanNode
 import com.copperleaf.kudzu.parser.SequenceNode
 import com.copperleaf.trellis.api.Spek
-import com.copperleaf.trellis.api.ValueSpek
+import com.copperleaf.trellis.dsl.SpekExpressionContext
+import com.copperleaf.trellis.dsl.parser.TrellisDslParser
+import com.copperleaf.trellis.dsl.parser.operators
+import com.copperleaf.trellis.impl.ValueSpek
 import kotlinx.coroutines.runBlocking
 
-@Suppress("UNCHECKED_CAST")
 class TrellisDslVisitor {
 
     companion object {
-        private val visitor = ExpressionVisitor(TrellisDslOperators.operators, ::createSpekFromExpressionOrNode)
+        private val visitor = ExpressionVisitor(
+            operators,
+            Companion::createSpekFromExpressionOrNode
+        )
 
         fun visit(context: SpekExpressionContext, node: Node) {
             visitor.visit(context, node)
@@ -51,7 +57,10 @@ class TrellisDslVisitor {
 
             return runBlocking {
                 if (hasSubExpr) {
-                    createSpekFromExpression(context, node)
+                    createSpekFromExpression(
+                        context,
+                        node
+                    )
                 } else {
                     createSpekFromTerm(context, node)
                 }
@@ -97,7 +106,11 @@ class TrellisDslVisitor {
                         .child<SequenceNode>()
                         .child<SequenceNode>()
                         .find<ChoiceNode>("exprTerm")
-                    val initialArgSpek = createSpekFromExpressionOrNode(context, initialArgNode)
+                    val initialArgSpek =
+                        createSpekFromExpressionOrNode(
+                            context,
+                            initialArgNode
+                        )
                     argValues.add(initialArgSpek)
 
                     val otherArgs = argsListNode
@@ -113,14 +126,22 @@ class TrellisDslVisitor {
                             val otherArgNode = otherArg
                                 .child<SequenceNode>()
                                 .find<ChoiceNode>("exprTerm")
-                            val otherArgSpek = createSpekFromExpressionOrNode(context, otherArgNode)
+                            val otherArgSpek =
+                                createSpekFromExpressionOrNode(
+                                    context,
+                                    otherArgNode
+                                )
                             argValues.add(otherArgSpek)
                         }
                     }
                 }
             }
 
-            return createSpekFromArgs(context, spekName, argValues)
+            return createSpekFromArgs(
+                context,
+                spekName,
+                argValues
+            )
         }
 
         private fun createSpekFromArgs(

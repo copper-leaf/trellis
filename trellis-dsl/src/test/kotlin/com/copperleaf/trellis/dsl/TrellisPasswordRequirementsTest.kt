@@ -1,14 +1,15 @@
 package com.copperleaf.trellis.dsl
 
-import com.copperleaf.trellis.api.EmptyVisitor
 import com.copperleaf.trellis.api.Spek
-import com.copperleaf.trellis.api.SpekVisitor
-import com.copperleaf.trellis.api.ValueSpek
-import com.copperleaf.trellis.api.and
-import com.copperleaf.trellis.api.andNot
-import com.copperleaf.trellis.api.visiting
-import com.copperleaf.trellis.dsl.TrellisDslVisitor.Companion.create
-import com.copperleaf.trellis.impl.strings.MinLengthSpek
+import com.copperleaf.trellis.dsl.visitor.TrellisDslVisitor.Companion.create
+import com.copperleaf.trellis.dsl.visitor.typeSafe
+import com.copperleaf.trellis.impl.MinLengthSpek
+import com.copperleaf.trellis.impl.ValueSpek
+import com.copperleaf.trellis.impl.and
+import com.copperleaf.trellis.impl.andNot
+import com.copperleaf.trellis.introspection.visitor.EmptyVisitor
+import com.copperleaf.trellis.introspection.visitor.SpekVisitor
+import com.copperleaf.trellis.introspection.visitor.visiting
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
@@ -99,25 +100,6 @@ class TrellisPasswordRequirementsTest {
                 candidate == currentUsername.evaluate(visitor, candidate)
             }
         }
-    }
-
-    class PasswordRequiresVisitor : SpekVisitor {
-
-        override fun enter(candidate: Spek<*, *>) {}
-
-        override fun <U> leave(candidate: Spek<*, *>, result: U) {
-            if(shouldLog(candidate)) println("- ${candidate.javaClass.simpleName} returned $result")
-        }
-
-        private fun shouldLog(spek: Spek<*, *>): Boolean {
-            return when (spek) {
-                is StringContainsSpek  -> true
-                is MinLengthSpek       -> true
-                is CurrentUsernameSpek -> true
-                else                   -> false
-            }
-        }
-
     }
 
 }

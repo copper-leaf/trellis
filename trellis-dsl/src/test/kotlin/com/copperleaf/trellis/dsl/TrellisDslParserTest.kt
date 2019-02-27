@@ -1,5 +1,7 @@
 package com.copperleaf.trellis.dsl
 
+import com.copperleaf.trellis.dsl.parser.TrellisDslParser
+import com.copperleaf.trellis.dsl.visitor.TrellisDslVisitor
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.CsvSource
 import org.junit.jupiter.params.provider.ValueSource

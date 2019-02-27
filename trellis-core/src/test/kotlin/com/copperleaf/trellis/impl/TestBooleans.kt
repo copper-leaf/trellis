@@ -1,7 +1,7 @@
-package com.copperleaf.trellis.api
+package com.copperleaf.trellis.impl
 
-import com.copperleaf.trellis.impl.strings.MaxLengthSpek
-import com.copperleaf.trellis.impl.strings.MinLengthSpek
+import com.copperleaf.trellis.api.Spek
+import com.copperleaf.trellis.introspection.visitor.EmptyVisitor
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat

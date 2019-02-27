@@ -1,11 +1,14 @@
 package com.copperleaf.trellis.dsl
 
-import com.copperleaf.trellis.api.EmptyVisitor
-import com.copperleaf.trellis.api.LargestSpek
-import com.copperleaf.trellis.api.SmallestSpek
 import com.copperleaf.trellis.api.Spek
-import com.copperleaf.trellis.impl.strings.MaxLengthSpek
-import com.copperleaf.trellis.impl.strings.MinLengthSpek
+import com.copperleaf.trellis.dsl.parser.TrellisDslParser
+import com.copperleaf.trellis.dsl.visitor.TrellisDslVisitor
+import com.copperleaf.trellis.dsl.visitor.typeSafe
+import com.copperleaf.trellis.impl.LargestSpek
+import com.copperleaf.trellis.impl.MaxLengthSpek
+import com.copperleaf.trellis.impl.MinLengthSpek
+import com.copperleaf.trellis.impl.SmallestSpek
+import com.copperleaf.trellis.introspection.visitor.EmptyVisitor
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.CsvSource
 import strikt.api.catching

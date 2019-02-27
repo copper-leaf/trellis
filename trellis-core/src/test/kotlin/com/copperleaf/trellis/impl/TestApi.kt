@@ -1,5 +1,6 @@
-package com.copperleaf.trellis.api
+package com.copperleaf.trellis.impl
 
+import com.copperleaf.trellis.introspection.visitor.EmptyVisitor
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
 import strikt.api.ExpectationBuilder
@@ -57,14 +58,29 @@ class TestApi {
             that(AlsoSpek<Double, Double, Boolean>(2.2, EqualsSpek(2.2)).evaluate(EmptyVisitor, 2.2)).isTrue()
 
             // test with a lambda
-            that(AlsoSpek<Double, Double, Boolean>({1.0}, EqualsSpek(2.2)).evaluate(EmptyVisitor, 2.2)).isFalse()
-            that(AlsoSpek<Double, Double, Boolean>({2.0}, EqualsSpek(2.2)).evaluate(EmptyVisitor, 2.2)).isFalse()
-            that(AlsoSpek<Double, Double, Boolean>({2.2}, EqualsSpek(2.2)).evaluate(EmptyVisitor, 2.2)).isTrue()
+            that(AlsoSpek<Double, Double, Boolean>({ 1.0 }, EqualsSpek(2.2)).evaluate(EmptyVisitor, 2.2)).isFalse()
+            that(AlsoSpek<Double, Double, Boolean>({ 2.0 }, EqualsSpek(2.2)).evaluate(EmptyVisitor, 2.2)).isFalse()
+            that(AlsoSpek<Double, Double, Boolean>({ 2.2 }, EqualsSpek(2.2)).evaluate(EmptyVisitor, 2.2)).isTrue()
 
             // test with a Spek
-            that(AlsoSpek<Double, Double, Boolean>(ValueSpek(1.0), EqualsSpek(2.2)).evaluate(EmptyVisitor, 2.2)).isFalse()
-            that(AlsoSpek<Double, Double, Boolean>(ValueSpek(2.0), EqualsSpek(2.2)).evaluate(EmptyVisitor, 2.2)).isFalse()
-            that(AlsoSpek<Double, Double, Boolean>(ValueSpek(2.2), EqualsSpek(2.2)).evaluate(EmptyVisitor, 2.2)).isTrue()
+            that(
+                AlsoSpek<Double, Double, Boolean>(ValueSpek(1.0), EqualsSpek(2.2)).evaluate(
+                    EmptyVisitor,
+                    2.2
+                )
+            ).isFalse()
+            that(
+                AlsoSpek<Double, Double, Boolean>(ValueSpek(2.0), EqualsSpek(2.2)).evaluate(
+                    EmptyVisitor,
+                    2.2
+                )
+            ).isFalse()
+            that(
+                AlsoSpek<Double, Double, Boolean>(ValueSpek(2.2), EqualsSpek(2.2)).evaluate(
+                    EmptyVisitor,
+                    2.2
+                )
+            ).isTrue()
         }
     }
 }

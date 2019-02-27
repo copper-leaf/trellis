@@ -1,9 +1,9 @@
 package com.copperleaf.trellis;
 
-import com.copperleaf.trellis.api.EmptyVisitor;
-import com.copperleaf.trellis.api.JavaKt;
 import com.copperleaf.trellis.api.Spek;
-import com.copperleaf.trellis.api.SpekVisitor;
+import com.copperleaf.trellis.impl.JavaKt;
+import com.copperleaf.trellis.introspection.visitor.EmptyVisitor;
+import com.copperleaf.trellis.introspection.visitor.SpekVisitor;
 import kotlin.Unit;
 import kotlin.coroutines.Continuation;
 import kotlin.jvm.functions.Function1;
