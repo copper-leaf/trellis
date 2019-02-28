@@ -1,7 +1,6 @@
 package com.copperleaf.trellis.dsl
 
 import com.copperleaf.trellis.api.Spek
-import com.copperleaf.trellis.dsl.visitor.TrellisDslVisitor.Companion.create
 import com.copperleaf.trellis.dsl.visitor.typeSafe
 import com.copperleaf.trellis.impl.ValueSpek
 import com.copperleaf.trellis.impl.andNot
@@ -33,15 +32,14 @@ class TrellisReadmeBooleanExpressionsTest {
     @ParameterizedTest
     @MethodSource("testArgs")
     fun testExpressionFormat(user: User, hasPermission: Boolean) {
-        val permissionSpek: Spek<User, Boolean> = create(
-            context,
-            """
-            |cap(write) or (role(author) and not capRevoked(write)) or superuser()
-            """.trimMargin()
-        )
-
         expect {
-            that(permissionSpek.evaluate(EmptyVisitor, user)).isEqualTo(hasPermission)
+            that(
+                TrellisDsl.evaluate<User, Boolean>(
+                    context,
+                    "cap(write) or (role(author) and not capRevoked(write)) or superuser()",
+                    user
+                )
+            ).isEqualTo(hasPermission)
         }
     }
 

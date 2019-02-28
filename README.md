@@ -245,7 +245,161 @@ val matchResult = spek.match(input) {
 }
 val result = matchResult.result // the value returned from the Spek
 val matches = matchResult.matches // a list of matched Speks and metadata
-``` 
+```
+
+## Dynamic Speks (spek-dsl)
+
+The core Trellis library is perfect for building your specifications in a type-safe way, but being integrated into the 
+programming language means that changes to Speks mean recompiling your code. But in some cases, it may be desirable to 
+build and evaluate Speks dynamically, so that they may be changes via configuration files or APIs.
+
+Trellis has an additional module, `trellis-dsl`, that provides exactly this functionality. It has a minimal 
+Specification language for building and evaluating speks in a fluent, easy-to-read format. Let's look at the two 
+examples above, rewritten using the Spek DSL:
+
+### Boolean Logic
+
+**Specification Expression**
+```
+cap(write) or (role(author) and not capRevoked(write)) or superuser()
+```
+
+**Configuration**
+
+```kotlin
+val context = SpekExpressionContext {
+    register("role") { cxt, args ->
+        IsRoleSpek(args.first().typeSafe<Any, Any, Any, String>(cxt))
+    }
+    register("superuser") { _, _ ->
+        IsSuperuserSpek()
+    }
+    register("cap") { cxt, args ->
+        HasExplicitCapabilitySpek(args.first().typeSafe<Any, Any, Any, String>(cxt))
+    }
+    register("capRevoked") { cxt, args ->
+        HasExplicitCapabilityRevokedSpek(args.first().typeSafe<Any, Any, Any, String>(cxt))
+    }
+}
+TrellisDsl.evaluate<User, Boolean>(
+    context,
+    "cap(write) or (role(author) and not capRevoked(write)) or superuser()",
+    user
+)
+```
+
+### Numeric Logic
+
+**Specification Expression**
+```
+largest(
+  loyalty('0.1', 1),
+  loyalty('0.15', 2),
+  loyalty('0.25', 5),
+  if(
+    betweenDates(
+      date(2018, 8, 1),
+      date(2018, 8, 31)
+    ),
+    promotion('0.2'),
+    '0.0'
+  )
+) + couponCode('0.1', friendsandfamily)
+```
+
+**Configuration**
+
+```kotlin
+val context = SpekExpressionContext {
+    register { cxt, args ->
+        val typesafeArgs = args
+            .map { it.typeSafe<Any, Any, Any, Number>(cxt) }
+            .toTypedArray()
+        LargestSpek(*typesafeArgs)
+    }
+    register("loyalty") { cxt, args ->
+        LoyaltyDiscountSpek(
+            args[0].typeSafe<Any, Any, Any, Double>(cxt),
+            args[1].typeSafe<Any, Any, Any, Int>(cxt)
+        )
+    }
+    register("couponCode") { cxt, args ->
+        CouponDiscountSpek(
+            args[0].typeSafe<Any, Any, Any, Double>(cxt),
+            args[1].typeSafe<Any, Any, Any, String>(cxt)
+        )
+    }
+    register("promotion") { cxt, args ->
+        PromotionDiscountSpek(
+            args[0].typeSafe<Any, Any, Any, Double>(cxt)
+        )
+    }
+    register("betweenDates") { cxt, args ->
+        BetweenDatesSpek(
+            args[0].typeSafe<Any, Any, Any, LocalDate?>(cxt),
+            args[1].typeSafe<Any, Any, Any, LocalDate?>(cxt),
+            ValueSpek((cxt as DiscountContext).currentDate)
+        )
+    }
+    register("date") { cxt, args ->
+        DateSpek(
+            args[0].typeSafe<Any, Any, Any, Int>(cxt),
+            args[1].typeSafe<Any, Any, Any, Int>(cxt),
+            args[2].typeSafe<Any, Any, Any, Int>(cxt)
+        )
+    }
+    register("if") { cxt, args ->
+        IfSpek(
+            args[0].typeSafe<Any, Any, Any, Boolean>(cxt),
+            args[1].typeSafe<Any, Any, Any, Any>(cxt),
+            args[2].typeSafe<Any, Any, Any, Any>(cxt)
+        )
+    }
+}
+TrellisDsl.evaluate<Discount, Double>(
+    context,
+    """
+    |largest(
+    |  loyalty('0.1', 1),
+    |  loyalty('0.15', 2),
+    |  loyalty('0.25', 5),
+    |  if(
+    |    betweenDates(
+    |      date(2018, 8, 1),
+    |      date(2018, 8, 31)
+    |    ),
+    |    promotion('0.2'),
+    |    '0.0'
+    |  )
+    |) + couponCode('0.1', friendsandfamily)
+    """.trimMargin(),
+    user
+)
+```
+
+Note how this last example uses nested speks. They will be parsed and evaluated in that same, nested tree structure, and
+there is no limit to the depth of sub-speks.
+
+### DSL Configuration
+
+In order to have the DSl create the leaf nodes from your specification objects, you'll need a `SpekExpressionContext`, 
+and you'll register your objects with its `register` method. That method accepts a lambda that receives a list of Speks
+parsed from its parameters. You will typically need to coerce these untyped speks to the types needed by your custom 
+speks, and you can use the `typeSafe` method to wrap them and coerce the parameters passed through the tree as 
+necessary. 
+
+The `typeSafe` method is a bit verbose because you need to pass it 4 type parameters, which are, in the following order:
+
+- `BC` - The "candidate" type for the spek being wrapped (the base spek). Or, the type being passed into the wrapped spek.
+- `BR` - The "return" type for the base spek. Or, the type being returned from the wrapped spek, that your spek will 
+    consume
+- `C` - The "candidate" type for your custom spek. Or, the type being passed into your custom spek, that must be coerced 
+    into the type passed to the base spek
+- `R` - The "return" type for your custom spek. Or, the type being that the base spek's return type must be coerced to in
+    order to be used by your custom spek
+    
+You cal also register custom coercion functions in the context using the `coerce` function, and the type to return if 
+coercion fails with the `default` function.
 
 ## Notes
 
@@ -259,7 +413,9 @@ asynchronous.
 Furthermore, by having the desired logic encapsulated in an object, this logic can be defined and tested elsewhere and 
 injected into the appropriate places with and IoC container, helping maintain a clear separation of concerns. In 
 addition, it provides a structure and reusability around this kind of logic (read: maintainability) that would not exist
-otherwise.  
+otherwise. 
+
+And lastly, by providing a DSL, Speks can be created dynamically, at runtime, without recompiling your code. 
 
 ## References
 

@@ -1,7 +1,6 @@
 package com.copperleaf.trellis.dsl
 
 import com.copperleaf.trellis.api.Spek
-import com.copperleaf.trellis.dsl.visitor.TrellisDslVisitor.Companion.create
 import com.copperleaf.trellis.dsl.visitor.typeSafe
 import com.copperleaf.trellis.impl.BetweenDatesSpek
 import com.copperleaf.trellis.impl.DateSpek
@@ -50,27 +49,29 @@ class TrellisReadmeNumericExpressionsTest {
     @MethodSource("testArgs")
     fun testExpressionFormat(user: Discount, currentDate: LocalDate, discountAmount: Double) {
         context.currentDate = currentDate
-        val permissionSpek: Spek<Discount, Double> = create(
-            context,
-            """
-            |largest(
-            |  loyalty('0.1', 1),
-            |  loyalty('0.15', 2),
-            |  loyalty('0.25', 5),
-            |  if(
-            |    betweenDates(
-            |      date(2018, 8, 1),
-            |      date(2018, 8, 31)
-            |    ),
-            |    promotion('0.2'),
-            |    '0.0'
-            |  )
-            |) + couponCode('0.1', friendsandfamily)
-            """.trimMargin()
-        )
 
         expect {
-            that(permissionSpek.evaluate(EmptyVisitor, user)).isEqualTo(discountAmount, 0.01)
+            that(
+                TrellisDsl.evaluate<Discount, Double>(
+                    context,
+                    """
+                    |largest(
+                    |  loyalty('0.1', 1),
+                    |  loyalty('0.15', 2),
+                    |  loyalty('0.25', 5),
+                    |  if(
+                    |    betweenDates(
+                    |      date(2018, 8, 1),
+                    |      date(2018, 8, 31)
+                    |    ),
+                    |    promotion('0.2'),
+                    |    '0.0'
+                    |  )
+                    |) + couponCode('0.1', friendsandfamily)
+                    """.trimMargin(),
+                    user
+                )
+            ).isEqualTo(discountAmount, 0.01)
         }
     }
 

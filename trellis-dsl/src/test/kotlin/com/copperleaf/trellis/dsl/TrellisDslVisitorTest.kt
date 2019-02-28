@@ -49,7 +49,7 @@ class TrellisDslVisitorTest {
             }
         }
 
-        TrellisDslVisitor.visit(spekContext, output!!)
+        TrellisDslVisitor.visitor.visit(spekContext, output!!)
 
         val spek = spekContext.value as Spek<String, Boolean>
         expect {
@@ -81,7 +81,7 @@ class TrellisDslVisitorTest {
             }
         }
 
-        TrellisDslVisitor.visit(spekContext, output!!)
+        TrellisDslVisitor.visitor.visit(spekContext, output!!)
 
         val spek = spekContext.value as Spek<String, Boolean>
         expect {
@@ -123,7 +123,7 @@ class TrellisDslVisitorTest {
             }
         }
 
-        TrellisDslVisitor.visit(spekContext, output!!)
+        TrellisDslVisitor.visitor.visit(spekContext, output!!)
 
         val spek = spekContext.value as Spek<String, Number>
         expect {
@@ -186,7 +186,7 @@ class TrellisDslVisitorTest {
             }
         }
 
-        TrellisDslVisitor.visit(spekContext, output!!)
+        TrellisDslVisitor.visitor.visit(spekContext, output!!)
 
         val spek = spekContext.value as Spek<String, Boolean>
         expect {

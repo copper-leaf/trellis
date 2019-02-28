@@ -1,7 +1,6 @@
 package com.copperleaf.trellis.dsl
 
 import com.copperleaf.trellis.api.Spek
-import com.copperleaf.trellis.dsl.visitor.TrellisDslVisitor.Companion.create
 import com.copperleaf.trellis.dsl.visitor.typeSafe
 import com.copperleaf.trellis.impl.MinLengthSpek
 import com.copperleaf.trellis.impl.ValueSpek
@@ -36,15 +35,14 @@ class TrellisPasswordRequirementsTest {
     @MethodSource("testArgs")
     fun testExpressionFormat(candidate: String, currentUsername: String, isValid: Boolean) {
         context.currentUsername = currentUsername
-        val spek: Spek<String, Boolean> = create(
-            context,
-            """
-            |contains('\w') and contains('\d') and minLength(8) and !username()
-            """.trimMargin()
-        )
-
         expect {
-            that(spek.evaluate(EmptyVisitor, candidate)).isEqualTo(isValid)
+            that(
+                TrellisDsl.evaluate<String, Boolean>(
+                    context,
+                    "contains('\\w') and contains('\\d') and minLength(8) and !username()",
+                    candidate
+                )
+            ).isEqualTo(isValid)
         }
     }
 

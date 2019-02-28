@@ -2,8 +2,6 @@
 package com.copperleaf.trellis.dsl.visitor
 
 import com.copperleaf.kudzu.Node
-import com.copperleaf.kudzu.ParserContext
-import com.copperleaf.kudzu.ParserException
 import com.copperleaf.kudzu.child
 import com.copperleaf.kudzu.find
 import com.copperleaf.kudzu.has
@@ -17,7 +15,6 @@ import com.copperleaf.kudzu.parser.ScanNode
 import com.copperleaf.kudzu.parser.SequenceNode
 import com.copperleaf.trellis.api.Spek
 import com.copperleaf.trellis.dsl.SpekExpressionContext
-import com.copperleaf.trellis.dsl.parser.TrellisDslParser
 import com.copperleaf.trellis.dsl.parser.operators
 import com.copperleaf.trellis.impl.ValueSpek
 import kotlinx.coroutines.runBlocking
@@ -25,30 +22,10 @@ import kotlinx.coroutines.runBlocking
 class TrellisDslVisitor {
 
     companion object {
-        private val visitor = ExpressionVisitor(
+        val visitor = ExpressionVisitor(
             operators,
             Companion::createSpekFromExpressionOrNode
         )
-
-        fun visit(context: SpekExpressionContext, node: Node) {
-            visitor.visit(context, node)
-        }
-
-        fun <T, U> create(context: SpekExpressionContext, expression: String): Spek<T, U> {
-            try {
-                val node = TrellisDslParser.spekExpression.parse(ParserContext(expression, 0, false))
-
-                if(node.second.isNotEmpty()) {
-                    throw IllegalArgumentException("parsing failed, expected EOF, got ${node.second}")
-                }
-
-                visitor.visit(context, node.first)
-                return context.value as Spek<T, U>
-            }
-            catch (e: ParserException) {
-                throw IllegalArgumentException("parsing failed, ${e.message}")
-            }
-        }
 
         private fun createSpekFromExpressionOrNode(context: SpekExpressionContext, node: Node): Spek<Any, Any> {
             val hasSubExpr = node
