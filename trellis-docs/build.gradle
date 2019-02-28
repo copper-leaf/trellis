@@ -1,5 +1,5 @@
 plugins {
-    id "com.eden.orchidPlugin" version "0.15.4"
+    id "com.eden.orchidPlugin" version "0.16.0"
 }
 
 group rootProject.group
@@ -39,7 +39,7 @@ orchid {
         environment = 'debug'
     }
 
-    args = ["githubToken ${project.hasProperty("github_token") ? project.property("github_token") : System.getenv('GITHUB_TOKEN')}"]
+    githubToken = "${project.hasProperty("github_token") ? project.property("github_token") : System.getenv('GITHUB_TOKEN')}"
 }
 tasks.build.dependsOn orchidBuild
 tasks.deploy.dependsOn orchidDeploy

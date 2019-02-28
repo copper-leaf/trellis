@@ -27,7 +27,7 @@ ext {
     github_project = 'copper-leaf/trellis'
 
     // Orchid
-    orchid_version = '0.15.4'
+    orchid_version = '0.16.0'
     base_url = 'https://copper-leaf.github.io/trellis'
 
     // Bintray uploads
