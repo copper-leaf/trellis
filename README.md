@@ -419,6 +419,6 @@ And lastly, by providing a DSL, Speks can be created dynamically, at runtime, wi
 
 ## References
 
-- http://www.michael-whelan.net/rules-design-pattern
-- https://www.martinfowler.com/apsupp/spec.pdf
-- https://en.wikipedia.org/wiki/Specification_pattern
+- [https://www.michael-whelan.net/rules-design-pattern](https://www.michael-whelan.net/rules-design-pattern)
+- [https://www.martinfowler.com/apsupp/spec.pdf](https://www.martinfowler.com/apsupp/spec.pdf)
+- [https://en.wikipedia.org/wiki/Specification_pattern](https://en.wikipedia.org/wiki/Specification_pattern)

@@ -6,25 +6,52 @@ site:
 
 theme:
   social:
-    github: 'copper-leaf/trellis'
-  primaryColor: '#449999'
-  bannerColor: '#449999'
+    other:
+      - link: '/'
+        label: 'Home'
+        icon: 'fas fa-home'
+      - link: 'https://github.com/copper-leaf/trellis'
+        label: 'Github'
+        icon: 'fab fa-github'
+      - link: 'https://twitter.com/OrchidSSG'
+        label: 'Twitter'
+        icon: 'fab fa-twitter'
   menu:
-  - type: 'link'
+  - type: 'page'
     title: 'Home'
-    url: '#{$0|baseUrl}/'
-  - type: 'kotlindocClasses'
-    title: 'Api Docs'
-  trianglifyOptions:
-    x_colors: ['#88ffe0', '#000000', '#88ffe0']
+    itemId: 'Home'
+  - type: 'wikiSections'
+  - type: 'page'
+    itemId: 'Changelog'
+  sidebarBackground: 'primary'
+  sidebarBackgroundType: SOLID
+  colors:
+    purple: '#449999'
   useSidebarSearch: true
 
 services:
   publications:
     stages:
-      ghPages:
+      - type: ghPages
         branch: gh-pages
         latestDirName: latest
         publishType: CleanBranch
         username: copper-leaf
         repo: trellis
+      - type: ghRelease
+        username: copper-leaf
+        repo: trellis
+
+
+allPages:
+  components:
+    - type: "pageContent"
+    - type: "prism"
+      languages:
+        - kotlin
+  extraCss:
+    - 'inline:all.scss:
+      code.language-kotlin .token.number { margin: 0; padding: 0; background: none; border: none; font-size: 1em; min-width: 0; }
+      code.language-kotlin .token.operator { margin: 0; padding: 0; background: none; border: none; font-size: 1em; min-width: 0; }
+      .hero figure.image { filter: hue-rotate(320deg);  }
+      '

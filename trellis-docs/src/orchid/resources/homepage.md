@@ -1,4 +1,5 @@
 ---
-components:
-  - type: 'readme'
+layout: doc
 ---
+
+{{ load('./../../../../README.md') | raw }}

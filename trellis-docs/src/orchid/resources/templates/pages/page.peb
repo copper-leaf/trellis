@@ -1,0 +1,3 @@
+<div class="content is-medium">
+{{ page.content | raw }}
+</div>
