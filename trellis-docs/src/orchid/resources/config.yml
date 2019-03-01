@@ -24,10 +24,12 @@ theme:
   - type: 'page'
     itemId: 'Changelog'
   sidebarBackground: 'primary'
-  sidebarBackgroundType: SOLID
+  sidebarBackgroundType: GRADIENT
   colors:
-    purple: '#449999'
+    purple: '#8CC4A5'
+    blue: '#449999'
   useSidebarSearch: true
+
 
 services:
   publications:
@@ -42,16 +44,19 @@ services:
         username: copper-leaf
         repo: trellis
 
-
 allPages:
   components:
     - type: "pageContent"
     - type: "prism"
+      githubTheme: 'duotone-light'
       languages:
         - kotlin
+        - java
   extraCss:
     - 'inline:all.scss:
       code.language-kotlin .token.number { margin: 0; padding: 0; background: none; border: none; font-size: 1em; min-width: 0; }
       code.language-kotlin .token.operator { margin: 0; padding: 0; background: none; border: none; font-size: 1em; min-width: 0; }
-      .hero figure.image { filter: hue-rotate(320deg);  }
+      .content blockquote, .content pre { border-left: 5px solid #8CC4A5; }
+      .content code { color: #8CC4A5; }
+      .content code[class*="language-"], .content pre[class*="language-"] { color: #8CC4A5; font-size: 0.875em; }
       '
