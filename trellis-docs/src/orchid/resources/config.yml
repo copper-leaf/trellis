@@ -30,7 +30,6 @@ theme:
     blue: '#449999'
   useSidebarSearch: true
 
-
 services:
   publications:
     stages:
@@ -40,9 +39,8 @@ services:
         publishType: CleanBranch
         username: copper-leaf
         repo: trellis
-      - type: ghRelease
-        username: copper-leaf
-        repo: trellis
+      - type: githubReleases
+        repo: copper-leaf/trellis
 
 allPages:
   components:
@@ -52,6 +50,7 @@ allPages:
       languages:
         - kotlin
         - java
+        - groovy
   extraCss:
     - 'inline:all.scss:
       code.language-kotlin .token.number { margin: 0; padding: 0; background: none; border: none; font-size: 1em; min-width: 0; }

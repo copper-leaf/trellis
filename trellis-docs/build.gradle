@@ -15,7 +15,6 @@ dependencies {
     orchidRuntime "io.github.javaeden.orchid:OrchidDocs:$orchid_version"
     orchidRuntime "io.github.javaeden.orchid:OrchidBsDoc:$orchid_version"
     orchidRuntime "io.github.javaeden.orchid:OrchidCopper:$orchid_version"
-    orchidRuntime "io.github.javaeden.orchid:OrchidKotlindoc:$orchid_version"
     orchidRuntime "io.github.javaeden.orchid:OrchidPluginDocs:$orchid_version"
 }
 
