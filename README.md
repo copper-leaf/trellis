@@ -32,11 +32,11 @@ Common use cases are for evaluating boolean logic, and for computing complex num
 ## Features
 
 - [Trellis Core](https://copper-leaf.github.io/trellis/wiki/trellis-core)
-  - [Java Interop](https://copper-leaf.github.io/trellis/wiki/java-interop.md)
-  - [Introspection](https://copper-leaf.github.io/trellis/wiki/introspection.md)
-- [Trellis DSL](https://copper-leaf.github.io/trellis/wiki/trellis-dsl.md)
-- [Boolean Logic](https://copper-leaf.github.io/trellis/wiki/boolean-logic.md)
-- [Numeric Logic](https://copper-leaf.github.io/trellis/wiki/numeric-logic.md)
+  - [Java Interop](https://copper-leaf.github.io/trellis/wiki/java-interop)
+  - [Introspection](https://copper-leaf.github.io/trellis/wiki/introspection)
+- [Trellis DSL](https://copper-leaf.github.io/trellis/wiki/trellis-dsl)
+- [Boolean Logic](https://copper-leaf.github.io/trellis/wiki/boolean-logic)
+- [Numeric Logic](https://copper-leaf.github.io/trellis/wiki/numeric-logic)
 
 ## Installation
 
