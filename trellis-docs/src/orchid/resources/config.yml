@@ -7,7 +7,7 @@ site:
 theme:
   social:
     other:
-      - link: '/'
+      - link: 'https://copper-leaf.github.io/trellis'
         label: 'Home'
         icon: 'fas fa-home'
       - link: 'https://github.com/copper-leaf/trellis'
@@ -34,13 +34,10 @@ services:
   publications:
     stages:
       - type: ghPages
-        branch: gh-pages
-        latestDirName: latest
-        publishType: CleanBranch
-        username: copper-leaf
-        repo: trellis
+        repo: 'copper-leaf/trellis'
+        username: 'cjbrooks12'
       - type: githubReleases
-        repo: copper-leaf/trellis
+        repo: 'copper-leaf/trellis'
 
 allPages:
   components:
@@ -55,7 +52,4 @@ allPages:
     - 'inline:all.scss:
       code.language-kotlin .token.number { margin: 0; padding: 0; background: none; border: none; font-size: 1em; min-width: 0; }
       code.language-kotlin .token.operator { margin: 0; padding: 0; background: none; border: none; font-size: 1em; min-width: 0; }
-      .content blockquote, .content pre { border-left: 5px solid #8CC4A5; }
-      .content code { color: #8CC4A5; }
-      .content code[class*="language-"], .content pre[class*="language-"] { color: #8CC4A5; font-size: 0.875em; }
       '

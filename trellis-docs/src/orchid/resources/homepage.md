@@ -1,5 +1,5 @@
 ---
-layout: doc
+layout: boxNoTitle
 ---
 
 {{ load('./../../../../README.md') | raw }}
