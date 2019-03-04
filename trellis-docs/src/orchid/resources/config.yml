@@ -26,8 +26,11 @@ theme:
   sidebarBackground: 'primary'
   sidebarBackgroundType: GRADIENT
   colors:
-    purple: '#8CC4A5'
+    green: '#8CC4A5'
     blue: '#449999'
+  palette:
+    link: 'BLUE'
+    primary: 'GREEN'
   useSidebarSearch: true
 
 services:
