@@ -1,4 +1,3 @@
-
 site:
   about:
     siteName: Trellis
@@ -17,21 +16,20 @@ theme:
         label: 'Twitter'
         icon: 'fab fa-twitter'
   menu:
-  - type: 'page'
-    title: 'Home'
-    itemId: 'Home'
-  - type: 'wikiSections'
-  - type: 'page'
-    itemId: 'Changelog'
+    - type: 'page'
+      title: 'Home'
+      itemId: 'Home'
+    - type: 'wikiSections'
+    - type: 'page'
+      itemId: 'Changelog'
   sidebarBackground: 'primary'
   sidebarBackgroundType: GRADIENT
   colors:
     green: '#8CC4A5'
     blue: '#449999'
   palette:
-    link: 'BLUE'
     primary: 'GREEN'
-  useSidebarSearch: true
+    link: 'BLUE'
 
 services:
   publications:
@@ -42,6 +40,12 @@ services:
       - type: githubReleases
         repo: 'copper-leaf/trellis'
 
+wiki:
+  wikiPages:
+    layout: wiki
+    menu:
+      - type: wiki
+
 allPages:
   components:
     - type: "pageContent"
@@ -51,8 +55,3 @@ allPages:
         - kotlin
         - java
         - groovy
-  extraCss:
-    - 'inline:all.scss:
-      code.language-kotlin .token.number { margin: 0; padding: 0; background: none; border: none; font-size: 1em; min-width: 0; }
-      code.language-kotlin .token.operator { margin: 0; padding: 0; background: none; border: none; font-size: 1em; min-width: 0; }
-      '
