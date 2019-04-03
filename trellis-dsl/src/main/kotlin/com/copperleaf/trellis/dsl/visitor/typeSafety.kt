@@ -12,17 +12,17 @@ class TypeSafeSpek<BC, BR, C, R>(
     private val brClass: Class<BR>,
     private val cClass: Class<C>,
     private val rClass: Class<R>,
-    private val base: Spek<BC, BR>
+    private val base: Spek<BC?, BR>
 ) : Spek<C, R> {
 
     override val children = listOf(base)
 
     override suspend fun evaluate(visitor: SpekVisitor, candidate: C): R {
         return visiting(visitor) {
-            val unknownCandidate = coerce(bcClass, candidate) ?: default(bcClass)
-            val typedCandidate: BC = unknownCandidate
+            val unknownCandidate = coerce(bcClass, candidate) ?: default(bcClass, candidate == null)
+            val typedCandidate: BC? = unknownCandidate
             val untypedResult = base.evaluate(visitor, typedCandidate)
-            val typedResult: R = coerce(rClass, untypedResult) ?: default(rClass)
+            val typedResult: R = coerce(rClass, untypedResult) ?: default(rClass, false)!!
 
             typedResult
         }
@@ -32,7 +32,7 @@ class TypeSafeSpek<BC, BR, C, R>(
         toClass: Class<U>,
         input: T
     ): U? {
-        return if ((input as Any).javaClass == toClass) {
+        return if ((input as Any?)?.javaClass == toClass) {
             input as U
         } else if (context.coercionFunctions.containsKey(toClass)) {
             return context.coercionFunctions[toClass]!!.invoke(context, input as Any) as U
@@ -58,11 +58,16 @@ class TypeSafeSpek<BC, BR, C, R>(
     }
 
     private fun <U> default(
-        toClass: Class<U>
-    ): U {
+        toClass: Class<U>,
+        nullable: Boolean
+    ): U? {
         return if (context.defaultFunctions.containsKey(toClass)) {
             return context.defaultFunctions[toClass]!!.invoke(context) as U
-        } else {
+        }
+        else if(nullable) {
+            null
+        }
+        else {
             when (toClass) {
                 String::class.java  -> "" as U
                 Int::class.java     -> 0 as U
@@ -86,7 +91,7 @@ inline fun <reified BC, reified BR, reified C, reified R> Spek<*, *>.typeSafe(co
         BR::class.java,
         C::class.java,
         R::class.java,
-        this as Spek<BC, BR>
+        this as Spek<BC?, BR>
     )
 }
 
@@ -101,6 +106,6 @@ inline fun <reified BC, reified BR, C, R> Spek<*, *>.typeSafe(
         BR::class.java,
         cClass,
         rClass,
-        this as Spek<BC, BR>
+        this as Spek<BC?, BR>
     )
 }

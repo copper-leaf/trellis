@@ -16,7 +16,7 @@ open class SpekExpressionContext(
 ) : ExpressionContext<Spek<*, *>>() {
 
     val spekIdentifiers = mutableListOf<SpekIdentifier<*>>()
-    val coercionFunctions = mutableMapOf<Class<*>, (SpekExpressionContext, Any) -> Any>()
+    val coercionFunctions = mutableMapOf<Class<*>, (SpekExpressionContext, Any?) -> Any?>()
     val defaultFunctions = mutableMapOf<Class<*>, (SpekExpressionContext) -> Any>()
 
     init {
@@ -30,7 +30,7 @@ open class SpekExpressionContext(
         spekIdentifiers.add(SpekIdentifier(name, S::class, func))
     }
 
-    inline fun <reified U : Any> coerce(noinline func: (SpekExpressionContext, Any) -> U) {
+    inline fun <reified U : Any?> coerce(noinline func: (SpekExpressionContext, Any?) -> U) {
         coercionFunctions[U::class.java] = func
     }
 

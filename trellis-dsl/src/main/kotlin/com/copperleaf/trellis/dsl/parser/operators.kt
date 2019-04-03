@@ -20,29 +20,29 @@ val operators = listOf(
 
 //region AND/OR/NOT
 //----------------------------------------------------------------------------------------------------------------------
-    createInfixOperator<Any, Boolean,  Boolean>(30,  "or", "|")  { a, b -> a || b },
-    createInfixOperator<Any, Boolean,  Boolean>(40,  "and", "&") { a, b -> a && b },
-    createPrefixOperator<Any, Boolean, Boolean>(130, "not", "!") { a    -> !a     },
+    createInfixOperator<Any?, Boolean,  Boolean>(30,  "or", "|")  { a, b -> a || b },
+    createInfixOperator<Any?, Boolean,  Boolean>(40,  "and", "&") { a, b -> a && b },
+    createPrefixOperator<Any?, Boolean, Boolean>(130, "not", "!") { a    -> !a     },
 //endregion
 
 //region COMPARISONS
 //----------------------------------------------------------------------------------------------------------------------
 
-    createInfixOperator<Any, Any,    Boolean>(80, "eq",  "==") { a, b -> a == b },
-    createInfixOperator<Any, Any,    Boolean>(80, "neq", "!=") { a, b -> a != b },
-    createInfixOperator<Any, Double, Boolean>(90, "gte", ">=") { a, b -> a >= b },
-    createInfixOperator<Any, Double, Boolean>(90, "gt",  ">")  { a, b -> a >  b },
-    createInfixOperator<Any, Double, Boolean>(90, "lte", "<=") { a, b -> a <= b },
-    createInfixOperator<Any, Double, Boolean>(90, "lt",  "<")  { a, b -> a <  b },
+    createInfixOperator<Any?, Any,    Boolean>(80, "eq",  "==") { a, b -> a == b },
+    createInfixOperator<Any?, Any,    Boolean>(80, "neq", "!=") { a, b -> a != b },
+    createInfixOperator<Any?, Double, Boolean>(90, "gte", ">=") { a, b -> a >= b },
+    createInfixOperator<Any?, Double, Boolean>(90, "gt",  ">")  { a, b -> a >  b },
+    createInfixOperator<Any?, Double, Boolean>(90, "lte", "<=") { a, b -> a <= b },
+    createInfixOperator<Any?, Double, Boolean>(90, "lt",  "<")  { a, b -> a <  b },
 
 //endregion
 
 //region MATH OPERATORS
 //----------------------------------------------------------------------------------------------------------------------
-    createInfixOperator<Any, Double, Double>(100, "plus", "+")  { a, b -> a + b },
-    createInfixOperator<Any, Double, Double>(100, "minus", "-") { a, b -> a - b },
-    createInfixOperator<Any, Double, Double>(110, "mul", "*")   { a, b -> a * b },
-    createInfixOperator<Any, Double, Double>(110, "div", "/")   { a, b -> a / b }
+    createInfixOperator<Any?, Double, Double>(100, "plus", "+")  { a, b -> a + b },
+    createInfixOperator<Any?, Double, Double>(100, "minus", "-") { a, b -> a - b },
+    createInfixOperator<Any?, Double, Double>(110, "mul", "*")   { a, b -> a * b },
+    createInfixOperator<Any?, Double, Double>(110, "div", "/")   { a, b -> a / b }
 //endregion
 
 )
@@ -77,8 +77,8 @@ class BinaryOperationSpek<T, U, V>(
 
     override suspend fun evaluate(visitor: SpekVisitor, candidate: T): V {
         return visiting(visitor) {
-            val typesafeLhs = lhs.typeSafe<Any, Any, T, U>(context, tClass, uClass)
-            val typesafeRhs = rhs.typeSafe<Any, Any, T, U>(context, tClass, uClass)
+            val typesafeLhs = lhs.typeSafe<Any?, Any, T, U>(context, tClass, uClass)
+            val typesafeRhs = rhs.typeSafe<Any?, Any, T, U>(context, tClass, uClass)
 
             cb(typesafeLhs.evaluate(visitor, candidate), typesafeRhs.evaluate(visitor, candidate))
         }
@@ -121,7 +121,7 @@ class UnaryOperationSpek<T, U, V>(
 
     override suspend fun evaluate(visitor: SpekVisitor, candidate: T): V {
         return visiting(visitor) {
-            val typesafeBase = base.typeSafe<Any, Any, T, U>(context, tClass, uClass)
+            val typesafeBase = base.typeSafe<Any?, Any, T, U>(context, tClass, uClass)
 
             cb(typesafeBase.evaluate(visitor, candidate))
         }
