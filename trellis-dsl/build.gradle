@@ -81,7 +81,7 @@ task sendCoverageToCodacy(type: JavaExec) {
     args = [
             "report",
             "-l", "Java",
-            "-r", "${buildDir}/reports/jacoco/report.xml",
+            "-r", "${buildDir}/reports/jacoco/test/jacocoTestReport.xml",
             "-t", "${System.getenv("CODACY_PROJECT_TOKEN")}",
             "--language", "Kotlin"
     ]

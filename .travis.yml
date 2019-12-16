@@ -31,7 +31,7 @@ jobs:
     osx_image: xcode8.3
 
   - stage: afterTests
-    install: ./gradlew assemble
+    install: ./gradlew assemble check
     script: ./gradlew codeCoverageReport sendCoverageToCodacy
     os: linux
     jdk: openjdk8
