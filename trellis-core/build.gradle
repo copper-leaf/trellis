@@ -1,11 +1,12 @@
 plugins {
-    id 'java'
-    id 'kotlin'
-    id 'jacoco'
+    id("java")
+    id("kotlin")
+    id("jacoco")
+    id("maven-publish")
 }
 
 group = rootProject.group
-version = rootProject.group
+version = rootProject.version
 
 repositories {
     jcenter()
@@ -25,7 +26,10 @@ dependencies {
     testCompile 'org.awaitility:awaitility:3.1.2'
 }
 
-sourceCompatibility = JavaVersion.VERSION_1_6
+sourceCompatibility = JavaVersion.VERSION_1_8
+java {
+    withSourcesJar()
+}
 compileKotlin {
     kotlinOptions.jvmTarget = "1.6"
 }
@@ -58,7 +62,6 @@ task codeCoverageReport(type: JacocoReport) {
 
     reports {
         xml.enabled true
-        xml.destination "${buildDir}/reports/jacoco/report.xml"
         html.enabled false
         csv.enabled false
     }
@@ -80,4 +83,16 @@ task sendCoverageToCodacy(type: JavaExec) {
             "-t", "${System.getenv("CODACY_PROJECT_TOKEN")}",
             "--language", "Kotlin"
     ]
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            groupId = project.group
+            artifactId = project.name
+            version = project.version
+
+            from components.java
+        }
+    }
 }

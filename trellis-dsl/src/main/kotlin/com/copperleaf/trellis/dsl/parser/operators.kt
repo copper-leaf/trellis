@@ -13,6 +13,8 @@ import com.copperleaf.kudzu.parser.WordParser
 import com.copperleaf.trellis.api.Spek
 import com.copperleaf.trellis.dsl.SpekExpressionContext
 import com.copperleaf.trellis.dsl.visitor.typeSafe
+import com.copperleaf.trellis.impl.BinaryOperationSpek
+import com.copperleaf.trellis.impl.UnaryOperationSpek
 import com.copperleaf.trellis.introspection.visitor.SpekVisitor
 import com.copperleaf.trellis.introspection.visitor.visiting
 
@@ -58,89 +60,24 @@ private fun createOperatorParser(name: String, vararg tokens: String): Parser {
     )
 }
 
-private inline fun <reified T, reified U, reified V> createInfixOperator(priority: Int, name: String, vararg tokens: String, noinline cb: (U, U) -> V) : EvaluableOperator<SpekExpressionContext, Spek<*, *>> {
+private inline fun <reified CandidateType, reified CoercedType, reified ResultType> createInfixOperator(priority: Int, name: String, vararg tokens: String, noinline cb: (CoercedType, CoercedType) -> ResultType) : EvaluableOperator<SpekExpressionContext, Spek<*, *>> {
     return InfixEvaluableOperator(createOperatorParser(name, *tokens), priority) { cxt, lhs, rhs ->
-        BinaryOperationSpek<T, U, V>(cxt, lhs, rhs, cb)
+        val tClass = CandidateType::class.java
+        val uClass = CoercedType::class.java
+        val typesafeLhs = lhs.typeSafe<Any?, Any, CandidateType, CoercedType>(cxt, tClass, uClass)
+        val typesafeRhs = rhs.typeSafe<Any?, Any, CandidateType, CoercedType>(cxt, tClass, uClass)
+
+        BinaryOperationSpek(typesafeLhs, typesafeRhs, "$name(${tokens.joinToString()})") { a, b -> cb(a(), b())}
     }
 }
 
-class BinaryOperationSpek<T, U, V>(
-    private val context: SpekExpressionContext,
-    private val tClass: Class<T>,
-    private val uClass: Class<U>,
-    private val lhs: Spek<*, *>,
-    private val rhs: Spek<*, *>,
-    private val cb: (U, U) -> V
-) : Spek<T, V> {
-
-    override val children = listOf(lhs, rhs)
-
-    override suspend fun evaluate(visitor: SpekVisitor, candidate: T): V {
-        return visiting(visitor) {
-            val typesafeLhs = lhs.typeSafe<Any?, Any, T, U>(context, tClass, uClass)
-            val typesafeRhs = rhs.typeSafe<Any?, Any, T, U>(context, tClass, uClass)
-
-            cb(typesafeLhs.evaluate(visitor, candidate), typesafeRhs.evaluate(visitor, candidate))
-        }
-    }
-
-    companion object {
-        inline operator fun <reified T, reified U, reified V> invoke(
-            context: SpekExpressionContext,
-            lhs: Spek<*, *>,
-            rhs: Spek<*, *>,
-            noinline cb: (U, U) -> V
-        ) : BinaryOperationSpek<T, U, V> {
-            return BinaryOperationSpek(
-                context,
-                T::class.java,
-                U::class.java,
-                lhs,
-                rhs,
-                cb
-            )
-        }
-    }
-}
-
-private inline fun <reified T, reified U, reified V> createPrefixOperator(priority: Int, name: String, vararg tokens: String, noinline cb: (U) -> V) : EvaluableOperator<SpekExpressionContext, Spek<*, *>> {
+private inline fun <reified CandidateType, reified CoercedType : Any, reified ResultType> createPrefixOperator(priority: Int, name: String, vararg tokens: String, noinline cb: (CoercedType) -> ResultType) : EvaluableOperator<SpekExpressionContext, Spek<*, *>> {
     return PrefixEvaluableOperator(createOperatorParser(name, *tokens), priority) { cxt, base ->
-        UnaryOperationSpek<T, U, V>(cxt, base, cb)
-    }
-}
+        val tClass = CandidateType::class.java
+        val uClass = CoercedType::class.java
+        val typesafeBase = base.typeSafe<Any?, Any, CandidateType, CoercedType>(cxt, tClass, uClass)
 
-class UnaryOperationSpek<T, U, V>(
-    private val context: SpekExpressionContext,
-    private val tClass: Class<T>,
-    private val uClass: Class<U>,
-    private val base: Spek<*, *>,
-    private val cb: (U) -> V
-) : Spek<T, V> {
-
-    override val children = listOf(base)
-
-    override suspend fun evaluate(visitor: SpekVisitor, candidate: T): V {
-        return visiting(visitor) {
-            val typesafeBase = base.typeSafe<Any?, Any, T, U>(context, tClass, uClass)
-
-            cb(typesafeBase.evaluate(visitor, candidate))
-        }
-    }
-
-    companion object {
-        inline operator fun <reified T, reified U, reified V> invoke(
-            context: SpekExpressionContext,
-            lhs: Spek<*, *>,
-            noinline cb: (U) -> V
-        ) : UnaryOperationSpek<T, U, V> {
-            return UnaryOperationSpek(
-                context,
-                T::class.java,
-                U::class.java,
-                lhs,
-                cb
-            )
-        }
+        UnaryOperationSpek(typesafeBase, "$name(${tokens.joinToString()})") { a -> cb(a()) }
     }
 }
 

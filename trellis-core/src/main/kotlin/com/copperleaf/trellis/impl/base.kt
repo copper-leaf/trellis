@@ -13,6 +13,10 @@ class ValueSpek<T, U>(private val value: suspend () -> U) : Spek<T, U> {
     override suspend fun evaluate(visitor: SpekVisitor, candidate: T): U {
         return visiting(visitor) { value() }
     }
+
+    override fun toString(): String {
+        return "ValueSpek()"
+    }
 }
 
 /**
@@ -21,6 +25,10 @@ class ValueSpek<T, U>(private val value: suspend () -> U) : Spek<T, U> {
 class CandidateSpek<T> : Spek<T, T> {
     override suspend fun evaluate(visitor: SpekVisitor, candidate: T): T {
         return visiting(visitor) { candidate }
+    }
+
+    override fun toString(): String {
+        return "CandidateSpek()"
     }
 }
 
@@ -38,6 +46,10 @@ class AlsoSpek<T, V, U>(private val newCandidate: Spek<T, V>, private val base: 
 
     override suspend fun evaluate(visitor: SpekVisitor, candidate: T): U {
         return visiting(visitor) { base.evaluate(visitor, newCandidate.evaluate(visitor, candidate)) }
+    }
+
+    override fun toString(): String {
+        return "AlsoSpek()"
     }
 }
 
@@ -67,6 +79,7 @@ fun <T, U> Spek<T, U>.named(name: String): Spek<T, U> = NamedSpek(name, this)
 class BinaryOperationSpek<T, U, V>(
     private val lhs: Spek<T, U>,
     private val rhs: Spek<T, U>,
+    private val name: String? = null,
     private val cb: suspend (suspend () -> U, suspend () -> U) -> V
 ) : Spek<T, V> {
 
@@ -79,10 +92,17 @@ class BinaryOperationSpek<T, U, V>(
             cb(lVal, rVal)
         }
     }
+
+    override fun toString(): String {
+        return name ?: super.toString()
+    }
+
+    companion object
 }
 
 class UnaryOperationSpek<T, U, V>(
     private val base: Spek<T, U>,
+    private val name: String? = null,
     private val cb: suspend (suspend () -> U) -> V
 ) : Spek<T, V> {
 
@@ -94,4 +114,9 @@ class UnaryOperationSpek<T, U, V>(
         }
     }
 
+    override fun toString(): String {
+        return name ?: super.toString()
+    }
+
+    companion object
 }

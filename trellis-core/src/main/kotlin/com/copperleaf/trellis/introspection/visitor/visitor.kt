@@ -37,22 +37,28 @@ object EmptyVisitor : SpekVisitor {
 /**
  * A simple Visitor which simply prints the name of the Spek being visited and its result.
  */
-class PrintVisitor(var out: PrintStream = System.out) : SpekVisitor {
+class PrintVisitor(val out: PrintStream = System.out) : SpekVisitor {
 
+    private var finished = false
     private var depth: Int = 0
 
     override fun enter(candidate: Spek<*, *>) {
-        out.println("${indent(depth)}entering leaving $candidate")
+        check(!finished) { "This visitor cannot be reused" }
+
+        out.println("${indent}entering $candidate")
         depth++
     }
 
     override fun <U> leave(candidate: Spek<*, *>, result: U) {
         depth--
-        out.println("${indent(depth)}leaving $candidate returned $result")
+        out.println("${indent}leaving $candidate returned $result")
+        if(depth == 0) {
+            finished = true
+        }
     }
 
-    private fun indent(currentIndent: Int): String {
-        return (0 until currentIndent).map { "| " }.joinToString(separator = "")
+    private val indent: String get() {
+        return (0 until depth).map { "| " }.joinToString(separator = "")
     }
 }
 

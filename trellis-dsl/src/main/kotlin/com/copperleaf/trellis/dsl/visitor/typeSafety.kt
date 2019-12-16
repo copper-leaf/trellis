@@ -22,9 +22,14 @@ class TypeSafeSpek<BC, BR, C, R>(
             val unknownCandidate = coerce(bcClass, candidate) ?: default(bcClass, candidate == null)
             val typedCandidate: BC? = unknownCandidate
             val untypedResult = base.evaluate(visitor, typedCandidate)
-            val typedResult: R = coerce(rClass, untypedResult) ?: default(rClass, false)!!
+            val typedResult: Any? = (coerce(rClass, untypedResult) ?: default(rClass))
 
-            typedResult
+            if(typedResult == null || rClass.isAssignableFrom(typedResult::class.java)) {
+                typedResult as R
+            }
+            else {
+                throw ClassCastException("expected ${rClass.name} value. $base returned type ${typedResult::class.java.simpleName} with value $typedResult")
+            }
         }
     }
 
@@ -40,6 +45,9 @@ class TypeSafeSpek<BC, BR, C, R>(
             when (toClass) {
                 String::class.java                               -> {
                     input.toString() as U
+                }
+                Boolean::class.java                              -> {
+                    input.toString().toBoolean() as U?
                 }
                 Int::class.java, Integer::class.java             -> {
                     input.toString().toInt() as U?
@@ -70,6 +78,7 @@ class TypeSafeSpek<BC, BR, C, R>(
         else {
             when (toClass) {
                 String::class.java  -> "" as U
+                Boolean::class.java -> false as U
                 Int::class.java     -> 0 as U
                 Integer::class.java -> 0 as U
                 Any::class.java     -> object {} as U
@@ -78,8 +87,14 @@ class TypeSafeSpek<BC, BR, C, R>(
         }
     }
 
+    private fun <U> default(
+        toClass: Class<U>
+    ): U {
+        return default(toClass, false)!!
+    }
+
     override fun toString(): String {
-        return "TypeSafeSpek Converts from ${base.javaClass.simpleName}<${bcClass.simpleName}, ${brClass.simpleName}> to TypeSafeSpek<${cClass.simpleName}, ${rClass.simpleName}>)"
+        return "TypeSafeSpek (Converts from ${base.javaClass.simpleName}<${bcClass.simpleName}, ${brClass.simpleName}> to TypeSafeSpek<${cClass.simpleName}, ${rClass.simpleName}>)"
     }
 
 }
