@@ -1,3 +1,7 @@
+## 1.0.1 - 2021-04-15
+
+- Changes AndroidManifest package for dsl artifact to avoid conflicts
+
 ## 1.0.0 - 2021-04-13
 
 - Publish to MavenCentral
