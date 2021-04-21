@@ -1,7 +1,11 @@
 package com.copperleaf.trellis.impl
 
-import com.copperleaf.trellis.*
-import com.copperleaf.trellis.introspection.visitor.EmptyVisitor
+import com.copperleaf.trellis.base.CandidateSpek
+import com.copperleaf.trellis.base.ValueSpek
+import com.copperleaf.trellis.expectThat
+import com.copperleaf.trellis.impl.conditionals.then
+import com.copperleaf.trellis.isEqualTo
+import com.copperleaf.trellis.visitor.EmptyVisitor
 import kotlin.test.Test
 
 class TestConditionals {

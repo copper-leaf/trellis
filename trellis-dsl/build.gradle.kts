@@ -63,7 +63,7 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 api(project(":trellis-core"))
-                implementation("io.github.copper-leaf:kudzu-core:1.0.0")
+                implementation("io.github.copper-leaf:kudzu-core:2.3.0")
             }
         }
         val commonTest by getting {
@@ -130,7 +130,7 @@ tasks.withType<JavaCompile> {
     targetCompatibility = Config.javaVersion
 }
 tasks.withType<Test> {
-    useJUnitPlatform()
+//    useJUnitPlatform()
     testLogging {
         showStandardStreams = true
     }

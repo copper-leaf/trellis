@@ -1,24 +1,24 @@
 @file:Suppress("NewApi")
 package com.copperleaf.trellis.impl
 
-import com.copperleaf.trellis.api.Spek
-import com.copperleaf.trellis.introspection.visitor.SpekVisitor
-import com.copperleaf.trellis.introspection.visitor.visiting
+import com.copperleaf.trellis.base.BaseSpek
+import com.copperleaf.trellis.base.Spek
+import com.copperleaf.trellis.base.ValueSpek
+import com.copperleaf.trellis.visitor.SpekVisitor
+import com.copperleaf.trellis.visitor.visiting
 import java.time.LocalDate
 
 class BetweenDatesSpek<T>(
     private val startDate: Spek<T, LocalDate?>,
     private val endDate: Spek<T, LocalDate?>,
     private val targetDate: Spek<T, LocalDate>
-) : Spek<T, Boolean> {
+) : BaseSpek<T, Boolean>(startDate, endDate, targetDate) {
 
     constructor(
         startDate: LocalDate?,
         endDate: LocalDate?,
         targetDate: LocalDate
     ) : this(ValueSpek(startDate), ValueSpek(endDate), ValueSpek(targetDate))
-
-    override val children = listOf(startDate, endDate, targetDate)
 
     override fun evaluate(visitor: SpekVisitor, candidate: T): Boolean {
         return visiting(visitor) {
@@ -45,9 +45,7 @@ class DateSpek<T>(
     private val year: Spek<T, Int>,
     private val month: Spek<T, Int>,
     private val day: Spek<T, Int>
-) : Spek<T, LocalDate> {
-
-    override val children = listOf(year, month, day)
+) : BaseSpek<T, LocalDate>(year, month, day) {
 
     override fun evaluate(visitor: SpekVisitor, candidate: T): LocalDate {
         return visiting(visitor) {

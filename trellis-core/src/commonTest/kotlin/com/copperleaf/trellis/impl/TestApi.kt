@@ -1,10 +1,14 @@
 package com.copperleaf.trellis.impl
 
+import com.copperleaf.trellis.base.AlsoSpek
+import com.copperleaf.trellis.base.CandidateSpek
+import com.copperleaf.trellis.base.ValueSpek
 import com.copperleaf.trellis.expectThat
-import com.copperleaf.trellis.introspection.visitor.EmptyVisitor
+import com.copperleaf.trellis.impl.comparison.EqualsSpek
 import com.copperleaf.trellis.isEqualTo
 import com.copperleaf.trellis.isFalse
 import com.copperleaf.trellis.isTrue
+import com.copperleaf.trellis.visitor.EmptyVisitor
 import kotlin.test.Test
 
 class TestApi {
@@ -27,7 +31,7 @@ class TestApi {
 
     @Test
     fun testEqualsSpekInt() {
-        val spek = EqualsSpek(2)
+        val spek = EqualsSpek(CandidateSpek(), ValueSpek(2))
 
         expectThat(spek.evaluate(EmptyVisitor, 1)).isFalse()
         expectThat(spek.evaluate(EmptyVisitor, 2)).isTrue()
@@ -35,7 +39,7 @@ class TestApi {
 
     @Test
     fun testEqualsSpekDouble() {
-        val spek = EqualsSpek(2.2)
+        val spek = EqualsSpek(CandidateSpek(), ValueSpek(2.2))
 
         expectThat(spek.evaluate(EmptyVisitor, 1.0)).isFalse()
         expectThat(spek.evaluate(EmptyVisitor, 2.0)).isFalse()
@@ -45,30 +49,69 @@ class TestApi {
     @Test
     fun testAlsoSpek() {
         // Test with a value
-        expectThat(AlsoSpek<Double, Double, Boolean>(1.0, EqualsSpek(2.2)).evaluate(EmptyVisitor, 2.2)).isFalse()
-        expectThat(AlsoSpek<Double, Double, Boolean>(2.0, EqualsSpek(2.2)).evaluate(EmptyVisitor, 2.2)).isFalse()
-        expectThat(AlsoSpek<Double, Double, Boolean>(2.2, EqualsSpek(2.2)).evaluate(EmptyVisitor, 2.2)).isTrue()
+        expectThat(
+            AlsoSpek<Double, Double, Boolean>(ValueSpek(1.0), EqualsSpek(CandidateSpek(), ValueSpek(2.2))).evaluate(
+                EmptyVisitor,
+                2.2
+            )
+        ).isFalse()
+        expectThat(
+            AlsoSpek<Double, Double, Boolean>(ValueSpek(2.0), EqualsSpek(CandidateSpek(), ValueSpek(2.2))).evaluate(
+                EmptyVisitor,
+                2.2
+            )
+        ).isFalse()
+        expectThat(
+            AlsoSpek<Double, Double, Boolean>(ValueSpek(2.2), EqualsSpek(CandidateSpek(), ValueSpek(2.2))).evaluate(
+                EmptyVisitor,
+                2.2
+            )
+        ).isTrue()
 
         // test with a lambda
-        expectThat(AlsoSpek<Double, Double, Boolean>({ 1.0 }, EqualsSpek(2.2)).evaluate(EmptyVisitor, 2.2)).isFalse()
-        expectThat(AlsoSpek<Double, Double, Boolean>({ 2.0 }, EqualsSpek(2.2)).evaluate(EmptyVisitor, 2.2)).isFalse()
-        expectThat(AlsoSpek<Double, Double, Boolean>({ 2.2 }, EqualsSpek(2.2)).evaluate(EmptyVisitor, 2.2)).isTrue()
+        expectThat(
+            AlsoSpek<Double, Double, Boolean>(
+                ValueSpek(1.0),
+                EqualsSpek(CandidateSpek(), ValueSpek(2.2))
+            ).evaluate(EmptyVisitor, 2.2)
+        ).isFalse()
+        expectThat(
+            AlsoSpek<Double, Double, Boolean>(
+                ValueSpek(2.0),
+                EqualsSpek(CandidateSpek(), ValueSpek(2.2))
+            ).evaluate(EmptyVisitor, 2.2)
+        ).isFalse()
+        expectThat(
+            AlsoSpek<Double, Double, Boolean>(
+                ValueSpek(2.2),
+                EqualsSpek(CandidateSpek(), ValueSpek(2.2))
+            ).evaluate(EmptyVisitor, 2.2)
+        ).isTrue()
 
         // test with a Spek
         expectThat(
-            AlsoSpek<Double, Double, Boolean>(ValueSpek(1.0), EqualsSpek(2.2)).evaluate(
+            AlsoSpek<Double, Double, Boolean>(
+                ValueSpek(1.0),
+                EqualsSpek(CandidateSpek(), ValueSpek(2.2))
+            ).evaluate(
                 EmptyVisitor,
                 2.2
             )
         ).isFalse()
         expectThat(
-            AlsoSpek<Double, Double, Boolean>(ValueSpek(2.0), EqualsSpek(2.2)).evaluate(
+            AlsoSpek<Double, Double, Boolean>(
+                ValueSpek(2.0),
+                EqualsSpek(CandidateSpek(), ValueSpek(2.2))
+            ).evaluate(
                 EmptyVisitor,
                 2.2
             )
         ).isFalse()
         expectThat(
-            AlsoSpek<Double, Double, Boolean>(ValueSpek(2.2), EqualsSpek(2.2)).evaluate(
+            AlsoSpek<Double, Double, Boolean>(
+                ValueSpek(2.2),
+                EqualsSpek(CandidateSpek(), ValueSpek(2.2))
+            ).evaluate(
                 EmptyVisitor,
                 2.2
             )

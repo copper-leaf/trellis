@@ -1,3 +1,8 @@
+## 2.0.0 - 2021-04-27
+
+- Reimplements DSL with the latest version of Kudzu, and in commonMain sourceset
+- Overhauls core APIs to streamline everything
+
 ## 1.0.1 - 2021-04-15
 
 - Changes AndroidManifest package for dsl artifact to avoid conflicts
