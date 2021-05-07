@@ -15,4 +15,5 @@ class NotSpek<Candidate>(
 fun <Candidate> Spek<Candidate, Boolean>.not(): Spek<Candidate, Boolean> = NotSpek(this)
 
 @JvmName("unsafeNot")
+@Suppress("UNCHECKED_CAST")
 fun <Candidate> Spek<Candidate, *>.not(): Spek<Candidate, Boolean> = NotSpek(this as Spek<Candidate, Boolean>)

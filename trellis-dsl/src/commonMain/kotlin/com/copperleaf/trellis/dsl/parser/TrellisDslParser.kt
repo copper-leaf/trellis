@@ -2,7 +2,6 @@ package com.copperleaf.trellis.dsl.parser
 
 import com.copperleaf.kudzu.node.Node
 import com.copperleaf.kudzu.node.many.ManyNode
-import com.copperleaf.kudzu.node.mapped.ValueNode
 import com.copperleaf.kudzu.parser.Parser
 import com.copperleaf.kudzu.parser.chars.CharInParser
 import com.copperleaf.kudzu.parser.choice.ExactChoiceParser
@@ -18,15 +17,15 @@ import com.copperleaf.kudzu.parser.value.AnyLiteralParser
 import com.copperleaf.trellis.base.Spek
 import com.copperleaf.trellis.base.ValueSpek
 import com.copperleaf.trellis.impl.booleans.and
-import com.copperleaf.trellis.impl.math.div
+import com.copperleaf.trellis.impl.booleans.not
+import com.copperleaf.trellis.impl.booleans.or
 import com.copperleaf.trellis.impl.comparison.eq
 import com.copperleaf.trellis.impl.comparison.gt
 import com.copperleaf.trellis.impl.comparison.gte
 import com.copperleaf.trellis.impl.comparison.lt
 import com.copperleaf.trellis.impl.comparison.lte
+import com.copperleaf.trellis.impl.math.div
 import com.copperleaf.trellis.impl.math.minus
-import com.copperleaf.trellis.impl.booleans.not
-import com.copperleaf.trellis.impl.booleans.or
 import com.copperleaf.trellis.impl.math.plus
 import com.copperleaf.trellis.impl.math.times
 
@@ -36,11 +35,11 @@ class TrellisDslParser(
     private val namedSpeks: Map<String, SpekFactory>
 ) {
 
-    internal val literalSpekParser: Parser<ValueNode<Spek<Any?, Any?>>> = createLiteralSpekParser()
+    internal val literalSpekParser: Parser<SpekNode> = createLiteralSpekParser()
 
-    internal val namedSpekParser: LazyParser<ValueNode<Spek<Any?, Any?>>> = LazyParser()
+    internal val namedSpekParser: LazyParser<SpekNode> = LazyParser()
 
-    internal val actualTermParser: Parser<ValueNode<Spek<Any?, Any?>>> = createActualSpekParser()
+    internal val actualTermParser: Parser<SpekNode> = createActualSpekParser()
 
     val parser: ExpressionParser<Spek<Any?, Any?>> = ExpressionParser(
         termParser = {
@@ -53,7 +52,7 @@ class TrellisDslParser(
 // Create Parsers
 // ---------------------------------------------------------------------------------------------------------------------
 
-    private fun createLiteralSpekParser(): Parser<ValueNode<Spek<Any?, Any?>>> {
+    private fun createLiteralSpekParser(): Parser<SpekNode> {
         return MappedParser(
             AnyLiteralParser()
         ) {
@@ -63,19 +62,19 @@ class TrellisDslParser(
 
     private fun createNamedSpekParser(
         subExpressionParser: Parser<Node>
-    ): Parser<ValueNode<Spek<Any?, Any?>>> {
-        val subExpressionMappedParser: Parser<ValueNode<Spek<Any?, Any?>>> = MappedParser(
+    ): Parser<SpekNode> {
+        val subExpressionMappedParser: Parser<SpekNode> = MappedParser(
             subExpressionParser
         ) {
             parser.evaluator.evaluate(it)
         }
 
-        val paramsListParser: Parser<ManyNode<ValueNode<Spek<Any?, Any?>>>> = SeparatedByParser(
+        val paramsListParser: Parser<ManyNode<SpekNode>> = SeparatedByParser(
             term = subExpressionMappedParser,
             separator = CharInParser(','),
         )
 
-        val paramsListWithParenthesisParser: Parser<ValueNode<List<Spek<Any?, Any?>>>> = MappedParser(
+        val paramsListWithParenthesisParser: Parser<SpekListNode> = MappedParser(
             MaybeParser(
                 SequenceParser(
                     CharInParser('('),
@@ -86,7 +85,7 @@ class TrellisDslParser(
         ) {
             if (it.node != null) {
                 val (_, paramsValues, _) = it.node!!.children
-                (paramsValues as ManyNode<ValueNode<Spek<Any?, Any?>>>).nodeList.map { it.value }
+                (paramsValues as ManyNode<SpekNode>).nodeList.map { it.value }
             } else {
                 emptyList()
             }
@@ -103,19 +102,19 @@ class TrellisDslParser(
             val (spekName, maybeSpekArgs) = it.children
 
             val namedSpekFactory = namedSpeks[spekName.text]!!
-            val spekFactoryArgs = (maybeSpekArgs as ValueNode<List<Spek<*, *>>>).value
+            val spekFactoryArgs = (maybeSpekArgs as SpekListNode).value
 
             namedSpekFactory(spekFactoryArgs) as Spek<Any?, Any?>
         }
     }
 
-    private fun createActualSpekParser(): Parser<ValueNode<Spek<Any?, Any?>>> {
+    private fun createActualSpekParser(): Parser<SpekNode> {
         return MappedParser(
             ExactChoiceParser(
                 literalSpekParser,
                 namedSpekParser,
             )
-        ) { (it.node as ValueNode<Spek<Any?, Any?>>).value }
+        ) { (it.node as SpekNode).value }
     }
 
     private fun createOperatorsList(): List<Operator<Spek<Any?, Any?>>> {
