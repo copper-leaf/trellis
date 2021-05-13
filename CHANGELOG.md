@@ -1,3 +1,7 @@
+## 2.2.0 - 2021-05-07
+
+- Updates Kudzu version to 2.5.0, use proper kotlin test dependencies
+
 ## 2.1.0 - 2021-05-07
 
 - Updates Kudzu version to 2.4.0
