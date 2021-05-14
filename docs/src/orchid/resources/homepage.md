@@ -1,5 +1,10 @@
 ---
-layout: boxNoTitle
 ---
 
-{{ load('./../../../../README.md') | raw }}
+# Trellis
+
+## Overview
+
+## Installation
+
+## Targets

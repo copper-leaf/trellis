@@ -1,6 +1,6 @@
 
 // Setup default project values
-// ---------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 var projectVersion: ProjectVersion by project.extra
 var shortVersion: String by project.extra
 var releaseVersion: String by project.extra
