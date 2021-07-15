@@ -63,7 +63,7 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 api(project(":trellis-core"))
-                implementation("io.github.copper-leaf:kudzu-core:2.5.0")
+                implementation("io.github.copper-leaf:kudzu-core:2.6.0")
             }
         }
         val commonTest by getting {

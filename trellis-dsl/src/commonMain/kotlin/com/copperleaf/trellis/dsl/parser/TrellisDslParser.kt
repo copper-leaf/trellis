@@ -84,8 +84,8 @@ class TrellisDslParser(
             )
         ) {
             if (it.node != null) {
-                val (_, paramsValues, _) = it.node!!.children
-                (paramsValues as ManyNode<SpekNode>).nodeList.map { it.value }
+                val (_, _, paramsValues, _) = it.node!!
+                paramsValues.nodeList.map { it.value }
             } else {
                 emptyList()
             }
@@ -98,11 +98,9 @@ class TrellisDslParser(
                 ),
                 paramsListWithParenthesisParser
             )
-        ) {
-            val (spekName, maybeSpekArgs) = it.children
-
+        ) { (_, spekName, maybeSpekArgs) ->
             val namedSpekFactory = namedSpeks[spekName.text]!!
-            val spekFactoryArgs = (maybeSpekArgs as SpekListNode).value
+            val spekFactoryArgs = maybeSpekArgs.value
 
             namedSpekFactory(spekFactoryArgs) as Spek<Any?, Any?>
         }

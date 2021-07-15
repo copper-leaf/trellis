@@ -1,10 +1,4 @@
 ---
 ---
 
-# Trellis
-
-## Overview
-
-## Installation
-
-## Targets
+{{ load('./../../../../README.md') | raw }}
