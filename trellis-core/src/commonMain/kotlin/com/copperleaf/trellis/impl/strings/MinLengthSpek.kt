@@ -5,7 +5,7 @@ import com.copperleaf.trellis.base.Spek
 import com.copperleaf.trellis.visitor.SpekVisitor
 import com.copperleaf.trellis.visitor.visiting
 
-class MinLengthSpek(
+public class MinLengthSpek(
     private val minLength: Spek<String, Int>
 ) : BaseSpek<String, Boolean>(minLength) {
 

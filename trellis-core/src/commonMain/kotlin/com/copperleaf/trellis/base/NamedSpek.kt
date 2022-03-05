@@ -6,9 +6,9 @@ import com.copperleaf.trellis.visitor.visiting
 /**
  * Wrap a spek and give it a name
  */
-class NamedSpek<Candidate, Result>(
-    val name: String,
-    val base: Spek<Candidate, Result>
+public class NamedSpek<Candidate, Result>(
+    public val name: String,
+    public val base: Spek<Candidate, Result>
 ) : BaseSpek<Candidate, Result>(base) {
 
     override val spekName: String = "[$name]"
@@ -18,6 +18,6 @@ class NamedSpek<Candidate, Result>(
     }
 }
 
-fun <Candidate, Result> Spek<Candidate, Result>.named(name: String): Spek<Candidate, Result> {
+public fun <Candidate, Result> Spek<Candidate, Result>.named(name: String): Spek<Candidate, Result> {
     return NamedSpek(name, this)
 }

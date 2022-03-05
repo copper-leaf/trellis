@@ -2,7 +2,7 @@ package com.copperleaf.trellis.util
 
 import com.copperleaf.trellis.base.Spek
 
-fun Spek<*, *>.printSpekTree(): String {
+public fun Spek<*, *>.printSpekTree(): String {
     return printSpekTree(0, emptyList())
 }
 

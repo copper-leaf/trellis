@@ -5,7 +5,7 @@ import com.copperleaf.trellis.base.Spek
 import com.copperleaf.trellis.visitor.SpekVisitor
 import com.copperleaf.trellis.visitor.visiting
 
-class IfSpek<Candidate, Result>(
+public class IfSpek<Candidate, Result>(
     private val _if: Spek<Candidate, Boolean>,
     private val _then: Spek<Candidate, Result>,
     private val _else: Spek<Candidate, Result>
@@ -22,7 +22,7 @@ class IfSpek<Candidate, Result>(
     }
 }
 
-fun <Candidate, Result> Spek<Candidate, Boolean>.then(
+public fun <Candidate, Result> Spek<Candidate, Boolean>.then(
     _then: Spek<Candidate, Result>,
     _else: Spek<Candidate, Result>
 ): Spek<Candidate, Result> =

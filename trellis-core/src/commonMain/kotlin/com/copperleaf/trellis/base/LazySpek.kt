@@ -3,7 +3,7 @@ package com.copperleaf.trellis.base
 import com.copperleaf.trellis.util.printSpekTree
 import com.copperleaf.trellis.visitor.SpekVisitor
 
-class LazySpek<Candidate, Result> : Spek<Candidate, Result> {
+public class LazySpek<Candidate, Result> : Spek<Candidate, Result> {
 
     private lateinit var spek: Spek<Candidate, Result>
 
@@ -16,7 +16,7 @@ class LazySpek<Candidate, Result> : Spek<Candidate, Result> {
     }
 
     @Suppress("UNCHECKED_CAST")
-    infix fun uses(spek: Spek<Candidate, Result>) {
+    public infix fun uses(spek: Spek<Candidate, Result>) {
         this.spek = spek
     }
 

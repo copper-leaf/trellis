@@ -5,7 +5,7 @@ import com.copperleaf.trellis.base.Spek
 /**
  * The default Visitor, which does nothing when a Spek is visited
  */
-object EmptyVisitor : SpekVisitor {
+public object EmptyVisitor : SpekVisitor {
     override fun enter(candidate: Spek<*, *>) {
     }
 

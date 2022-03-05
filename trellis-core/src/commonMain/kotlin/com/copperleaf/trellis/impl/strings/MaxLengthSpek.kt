@@ -5,7 +5,7 @@ import com.copperleaf.trellis.base.Spek
 import com.copperleaf.trellis.visitor.SpekVisitor
 import com.copperleaf.trellis.visitor.visiting
 
-class MaxLengthSpek(
+public class MaxLengthSpek(
     private val maxLength: Spek<String, Int>
 ) : BaseSpek<String, Boolean>(maxLength) {
 

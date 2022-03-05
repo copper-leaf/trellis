@@ -5,7 +5,9 @@ import com.copperleaf.trellis.base.Spek
 /**
  * A simple Visitor which simply prints the name of the Spek being visited and its result.
  */
-class StringBuilderVisitor(val out: StringBuilder = StringBuilder()) : SpekVisitor {
+public class StringBuilderVisitor(
+    public val out: StringBuilder = StringBuilder()
+) : SpekVisitor {
 
     private var finished = false
     private var depth: Int = 0
@@ -25,7 +27,8 @@ class StringBuilderVisitor(val out: StringBuilder = StringBuilder()) : SpekVisit
         }
     }
 
-    private val indent: String get() {
-        return (0 until depth).map { "| " }.joinToString(separator = "")
-    }
+    private val indent: String
+        get() {
+            return (0 until depth).map { "| " }.joinToString(separator = "")
+        }
 }

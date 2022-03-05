@@ -3,7 +3,7 @@ package com.copperleaf.trellis.base
 import com.copperleaf.trellis.visitor.SpekVisitor
 import com.copperleaf.trellis.visitor.visiting
 
-open class BinaryOperationSpek<Candidate, Operand, Result>(
+public open class BinaryOperationSpek<Candidate, Operand, Result>(
     private val lhs: Spek<Candidate, Operand>,
     private val rhs: Spek<Candidate, Operand>,
     private val cb: (() -> Operand, () -> Operand) -> Result

@@ -7,7 +7,7 @@ import java.io.PrintStream
 /**
  * A simple Visitor which simply prints the name of the Spek being visited and its result.
  */
-class PrintStreamVisitor(val out: PrintStream = System.out) : SpekVisitor {
+public class PrintStreamVisitor(public val out: PrintStream = System.out) : SpekVisitor {
 
     private var finished = false
     private var depth: Int = 0

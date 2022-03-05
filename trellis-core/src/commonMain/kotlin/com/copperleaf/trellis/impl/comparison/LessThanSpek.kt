@@ -4,7 +4,7 @@ import com.copperleaf.trellis.base.BinaryOperationSpek
 import com.copperleaf.trellis.base.Spek
 import kotlin.jvm.JvmName
 
-class LessThanSpek<Candidate, Operand : Comparable<Operand>>(
+public class LessThanSpek<Candidate, Operand : Comparable<Operand>>(
     lhs: Spek<Candidate, Operand>,
     rhs: Spek<Candidate, Operand>,
     private val allowEquals: Boolean
@@ -20,7 +20,7 @@ class LessThanSpek<Candidate, Operand : Comparable<Operand>>(
     }
 )
 
-infix fun <Candidate> Spek<Candidate, Boolean>.lt(
+public infix fun <Candidate> Spek<Candidate, Boolean>.lt(
     other: Spek<Candidate, Boolean>
 ): Spek<Candidate, Boolean> = LessThanSpek(
     this,
@@ -30,7 +30,7 @@ infix fun <Candidate> Spek<Candidate, Boolean>.lt(
 
 @JvmName("unsafeLt")
 @Suppress("UNCHECKED_CAST")
-infix fun <Candidate> Spek<Candidate, *>.lt(
+public infix fun <Candidate> Spek<Candidate, *>.lt(
     other: Spek<Candidate, *>
 ): Spek<Candidate, Boolean> = LessThanSpek(
     this as Spek<Candidate, Boolean>,
@@ -38,7 +38,7 @@ infix fun <Candidate> Spek<Candidate, *>.lt(
     false
 )
 
-infix fun <Candidate> Spek<Candidate, Boolean>.lte(
+public infix fun <Candidate> Spek<Candidate, Boolean>.lte(
     other: Spek<Candidate, Boolean>
 ): Spek<Candidate, Boolean> = LessThanSpek(
     this,
@@ -48,7 +48,7 @@ infix fun <Candidate> Spek<Candidate, Boolean>.lte(
 
 @JvmName("unsafeLte")
 @Suppress("UNCHECKED_CAST")
-infix fun <Candidate> Spek<Candidate, *>.lte(
+public infix fun <Candidate> Spek<Candidate, *>.lte(
     other: Spek<Candidate, *>
 ): Spek<Candidate, Boolean> = LessThanSpek(
     this as Spek<Candidate, Boolean>,

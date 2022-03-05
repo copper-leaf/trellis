@@ -5,15 +5,15 @@ import com.copperleaf.trellis.base.UnaryOperationSpek
 import kotlin.jvm.JvmName
 
 @Suppress("UNCHECKED_CAST")
-class NotSpek<Candidate>(
+public class NotSpek<Candidate>(
     lhs: Spek<Candidate, Boolean>
 ) : UnaryOperationSpek<Candidate, Boolean, Boolean>(
     lhs,
     cb = { a -> !a() }
 )
 
-fun <Candidate> Spek<Candidate, Boolean>.not(): Spek<Candidate, Boolean> = NotSpek(this)
+public fun <Candidate> Spek<Candidate, Boolean>.not(): Spek<Candidate, Boolean> = NotSpek(this)
 
 @JvmName("unsafeNot")
 @Suppress("UNCHECKED_CAST")
-fun <Candidate> Spek<Candidate, *>.not(): Spek<Candidate, Boolean> = NotSpek(this as Spek<Candidate, Boolean>)
+public fun <Candidate> Spek<Candidate, *>.not(): Spek<Candidate, Boolean> = NotSpek(this as Spek<Candidate, Boolean>)

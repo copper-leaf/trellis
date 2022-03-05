@@ -10,12 +10,10 @@ plugins {
 description = "A Kotlin implementation of the Specification Pattern"
 
 android {
-    compileSdkVersion(30)
+    compileSdk = 31
     defaultConfig {
-        minSdkVersion(21)
-        targetSdkVersion(30)
-        versionCode = 1
-        versionName = project.version.toString()
+        minSdk = 21
+        targetSdk = 31
         testInstrumentationRunner = "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -24,10 +22,10 @@ android {
         }
     }
     sourceSets {
-        val main by getting {
+        getByName("main") {
             setRoot("src/androidMain")
         }
-        val androidTest by getting {
+        getByName("androidTest") {
             setRoot("src/androidTest")
         }
     }
@@ -37,18 +35,24 @@ android {
             isReturnDefaultValues = true
         }
     }
-    lintOptions {
+    lint {
         disable("GradleDependency")
     }
 }
 
 kotlin {
+    explicitApi()
+
     jvm { }
     android {
         publishAllLibraryVariants()
     }
     js(BOTH) {
-        browser { }
+        browser {
+            testTask {
+                enabled = false
+            }
+        }
     }
     ios { }
 
@@ -127,7 +131,6 @@ tasks.withType<Test> {
     }
 }
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-    kotlinOptions.useIR = true
     kotlinOptions {
         jvmTarget = Config.javaVersion
     }

@@ -4,7 +4,7 @@ import com.copperleaf.trellis.base.BinaryOperationSpek
 import com.copperleaf.trellis.base.Spek
 import kotlin.jvm.JvmName
 
-class GreaterThanSpek<Candidate, Operand : Comparable<Operand>>(
+public class GreaterThanSpek<Candidate, Operand : Comparable<Operand>>(
     lhs: Spek<Candidate, Operand>,
     rhs: Spek<Candidate, Operand>,
     private val allowEquals: Boolean
@@ -20,7 +20,7 @@ class GreaterThanSpek<Candidate, Operand : Comparable<Operand>>(
     }
 )
 
-infix fun <Candidate> Spek<Candidate, Boolean>.gt(
+public infix fun <Candidate> Spek<Candidate, Boolean>.gt(
     other: Spek<Candidate, Boolean>
 ): Spek<Candidate, Boolean> = GreaterThanSpek(
     this,
@@ -30,7 +30,7 @@ infix fun <Candidate> Spek<Candidate, Boolean>.gt(
 
 @JvmName("unsafeGt")
 @Suppress("UNCHECKED_CAST")
-infix fun <Candidate> Spek<Candidate, *>.gt(
+public infix fun <Candidate> Spek<Candidate, *>.gt(
     other: Spek<Candidate, *>
 ): Spek<Candidate, Boolean> = GreaterThanSpek(
     this as Spek<Candidate, Boolean>,
@@ -38,7 +38,7 @@ infix fun <Candidate> Spek<Candidate, *>.gt(
     false
 )
 
-infix fun <Candidate> Spek<Candidate, Boolean>.gte(
+public infix fun <Candidate> Spek<Candidate, Boolean>.gte(
     other: Spek<Candidate, Boolean>
 ): Spek<Candidate, Boolean> = GreaterThanSpek(
     this,
@@ -48,7 +48,7 @@ infix fun <Candidate> Spek<Candidate, Boolean>.gte(
 
 @JvmName("unsafeGte")
 @Suppress("UNCHECKED_CAST")
-infix fun <Candidate> Spek<Candidate, *>.gte(
+public infix fun <Candidate> Spek<Candidate, *>.gte(
     other: Spek<Candidate, *>
 ): Spek<Candidate, Boolean> = GreaterThanSpek(
     this as Spek<Candidate, Boolean>,

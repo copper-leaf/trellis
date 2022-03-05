@@ -1,0 +1,5 @@
+public final class com/copperleaf/trellis/dsl/parser/TrellisDslParser {
+	public fun <init> (Ljava/util/Map;)V
+	public final fun getParser ()Lcom/copperleaf/kudzu/parser/expression/ExpressionParser;
+}
+

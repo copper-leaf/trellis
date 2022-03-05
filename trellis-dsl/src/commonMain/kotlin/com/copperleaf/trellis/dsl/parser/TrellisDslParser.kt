@@ -1,6 +1,6 @@
 package com.copperleaf.trellis.dsl.parser
 
-import com.copperleaf.kudzu.node.Node
+import com.copperleaf.kudzu.node.expression.RootExpressionNode
 import com.copperleaf.kudzu.node.many.ManyNode
 import com.copperleaf.kudzu.parser.Parser
 import com.copperleaf.kudzu.parser.chars.CharInParser
@@ -31,7 +31,7 @@ import com.copperleaf.trellis.impl.math.times
 
 @ExperimentalStdlibApi
 @Suppress("UNCHECKED_CAST")
-class TrellisDslParser(
+public class TrellisDslParser(
     private val namedSpeks: Map<String, SpekFactory>
 ) {
 
@@ -41,7 +41,7 @@ class TrellisDslParser(
 
     internal val actualTermParser: Parser<SpekNode> = createActualSpekParser()
 
-    val parser: ExpressionParser<Spek<Any?, Any?>> = ExpressionParser(
+    public val parser: ExpressionParser<Spek<Any?, Any?>> = ExpressionParser(
         termParser = {
             namedSpekParser uses createNamedSpekParser(it)
             actualTermParser
@@ -61,7 +61,7 @@ class TrellisDslParser(
     }
 
     private fun createNamedSpekParser(
-        subExpressionParser: Parser<Node>
+        subExpressionParser: Parser<RootExpressionNode>
     ): Parser<SpekNode> {
         val subExpressionMappedParser: Parser<SpekNode> = MappedParser(
             subExpressionParser

@@ -7,7 +7,7 @@ import com.copperleaf.trellis.base.Spek
 import com.copperleaf.trellis.visitor.SpekVisitor
 import com.copperleaf.trellis.visitor.visiting
 
-class MinSpek<Candidate, Operand : Comparable<Operand>>(
+public class MinSpek<Candidate, Operand : Comparable<Operand>>(
     private vararg val bases: Spek<Candidate, Operand>
 ) : BaseSpek<Candidate, Operand>(*bases) {
 

@@ -6,7 +6,7 @@ import com.copperleaf.trellis.visitor.visiting
 /**
  * Treat a static value as the return value a spek. Value is lazily loaded.
  */
-class LazyValueSpek<Candidate, Result>(
+public class LazyValueSpek<Candidate, Result>(
     private val value: () -> Result
 ) : BaseSpek<Candidate, Result>() {
 

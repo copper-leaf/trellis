@@ -8,13 +8,13 @@ import com.copperleaf.trellis.visitor.SpekVisitor
 import com.copperleaf.trellis.visitor.visiting
 import java.time.LocalDate
 
-class BetweenDatesSpek<T>(
+public class BetweenDatesSpek<T>(
     private val startDate: Spek<T, LocalDate?>,
     private val endDate: Spek<T, LocalDate?>,
     private val targetDate: Spek<T, LocalDate>
 ) : BaseSpek<T, Boolean>(startDate, endDate, targetDate) {
 
-    constructor(
+    public constructor(
         startDate: LocalDate?,
         endDate: LocalDate?,
         targetDate: LocalDate
@@ -41,7 +41,7 @@ class BetweenDatesSpek<T>(
     }
 }
 
-class DateSpek<T>(
+public class DateSpek<T>(
     private val year: Spek<T, Int>,
     private val month: Spek<T, Int>,
     private val day: Spek<T, Int>

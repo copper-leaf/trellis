@@ -5,7 +5,7 @@ import com.copperleaf.trellis.base.Spek
 /**
  * A simple Visitor which simply prints the name of the Spek being visited and its result.
  */
-class PrintlnVisitor : SpekVisitor {
+public class PrintlnVisitor : SpekVisitor {
 
     private var finished = false
     private var depth: Int = 0
