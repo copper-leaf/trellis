@@ -1,6 +1,7 @@
 ## 3.0.0 - 2022-03-04
 
-- 
+- Updates Kotlin version to 1.6.10
+- Enables ExplicitApi and BinaryCompatibilityValidator on the repo, to improve the stability of its API
 
 ## 2.3.0 - 2021-07-15
 

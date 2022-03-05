@@ -51,7 +51,7 @@ See the [website](https://copper-leaf.github.io/trellis/) for detailed documenta
 
 # License
 
-Trellis is licensed under the BSD 3-Clause License, see [LICENSE.md](https://github.com/copper-leaf/trellis/tree/master/LICENSE.md).
+Trellis is licensed under the BSD 3-Clause License, see [LICENSE.md](https://github.com/copper-leaf/trellis/tree/main/LICENSE.md).
 
 # References
 
