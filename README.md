@@ -4,7 +4,7 @@
 
 ![GitHub release (latest by date)](https://img.shields.io/github/v/release/copper-leaf/trellis)
 ![Maven Central](https://img.shields.io/maven-central/v/io.github.copper-leaf/trellis-core)
-![Kotlin Version](https://img.shields.io/badge/Kotlin-1.4.32-orange)
+![Kotlin Version](https://img.shields.io/badge/Kotlin-1.6.10-orange)
 
 Trellis is an implementation of the [Specification Pattern](https://en.wikipedia.org/wiki/Specification_pattern)
 written in Kotlin, and designed for asynchronous evaluation of specifications using Kotlin coroutines and dynamic 
