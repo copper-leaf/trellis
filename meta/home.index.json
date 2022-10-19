@@ -1,0 +1,31 @@
+{
+  "ownKey": "home",
+  "ownPages": [
+    {
+      "reference": {
+        "path": "",
+        "baseUrl": "https://copper-leaf.github.io/trellis",
+        "fileName": "",
+        "extension": "html",
+        "usePrettyUrl": true,
+        "link": "https://copper-leaf.github.io/trellis"
+      },
+      "description": "",
+      "title": "Home",
+      "content": "<h1 id=\"trellis\"><a href=\"#trellis\" id=\"trellis\" class=\"anchor\"><\/a>Trellis<\/h1>\n<blockquote>\n<p>A Kotlin implementation of the <a href=\"https://en.wikipedia.org/wiki/Specification_pattern\">Specification Pattern<\/a><\/p>\n<\/blockquote>\n<p><img src=\"https://img.shields.io/github/v/release/copper-leaf/trellis\" alt=\"GitHub release (latest by date)\" />\n<img src=\"https://img.shields.io/maven-central/v/io.github.copper-leaf/trellis-core\" alt=\"Maven Central\" />\n<img src=\"https://img.shields.io/badge/Kotlin-1.7.20-orange\" alt=\"Kotlin Version\" /><\/p>\n<p>Trellis is an implementation of the <a href=\"https://en.wikipedia.org/wiki/Specification_pattern\">Specification Pattern<\/a>\nwritten in Kotlin, and designed for asynchronous evaluation of specifications using Kotlin coroutines and dynamic\ncreation and evaluation.<\/p>\n<h1 id=\"supported-platformsfeatures\"><a href=\"#supported-platformsfeatures\" id=\"supported-platformsfeatures\" class=\"anchor\"><\/a>Supported Platforms/Features<\/h1>\n<table>\n<thead>\n<tr><th>Platform<\/th><\/tr>\n<\/thead>\n<tbody>\n<tr><td>Android<\/td><\/tr>\n<tr><td>JVM<\/td><\/tr>\n<tr><td>iOS<\/td><\/tr>\n<tr><td>JS<\/td><\/tr>\n<\/tbody>\n<\/table>\n<h1 id=\"installation\"><a href=\"#installation\" id=\"installation\" class=\"anchor\"><\/a>Installation<\/h1>\n<pre><code class=\"language-kotlin\">repositories {\n    mavenCentral()\n}\n\n// for plain JVM or Android projects\ndependencies {\n    implementation(&quot;io.github.copper-leaf:trellis-core:{{site.version}}&quot;)\n    implementation(&quot;io.github.copper-leaf:trellis-dsl:{{site.version}}&quot;)\n}\n\n// for multiplatform projects\nkotlin {\n    sourceSets {\n        val commonMain by getting {\n            dependencies {\n                implementation(&quot;io.github.copper-leaf:trellis-core:{{site.version}}&quot;)\n                implementation(&quot;io.github.copper-leaf:trellis-dsl:{{site.version}}&quot;)\n            }\n        }\n    }\n}\n<\/code><\/pre>\n<h1 id=\"documentation\"><a href=\"#documentation\" id=\"documentation\" class=\"anchor\"><\/a>Documentation<\/h1>\n<p>See the <a href=\"https://copper-leaf.github.io/trellis/\">website<\/a> for detailed documentation and usage instructions.<\/p>\n<h1 id=\"license\"><a href=\"#license\" id=\"license\" class=\"anchor\"><\/a>License<\/h1>\n<p>Trellis is licensed under the BSD 3-Clause License, see <a href=\"https://github.com/copper-leaf/trellis/tree/main/LICENSE.md\">LICENSE.md<\/a>.<\/p>\n<h1 id=\"references\"><a href=\"#references\" id=\"references\" class=\"anchor\"><\/a>References<\/h1>\n<ul>\n<li><a href=\"https://www.michael-whelan.net/rules-design-pattern\">https://www.michael-whelan.net/rules-design-pattern<\/a><\/li>\n<li><a href=\"https://www.martinfowler.com/apsupp/spec.pdf\">https://www.martinfowler.com/apsupp/spec.pdf<\/a><\/li>\n<li><a href=\"https://en.wikipedia.org/wiki/Specification_pattern\">https://en.wikipedia.org/wiki/Specification_pattern<\/a><\/li>\n<\/ul>\n"
+    },
+    {
+      "reference": {
+        "path": "",
+        "baseUrl": "https://copper-leaf.github.io/trellis",
+        "fileName": "404",
+        "extension": "html",
+        "usePrettyUrl": false,
+        "link": "https://copper-leaf.github.io/trellis/404.html"
+      },
+      "description": "",
+      "title": "Not Found",
+      "content": ""
+    }
+  ]
+}
