@@ -77,19 +77,6 @@ public final class com/copperleaf/trellis/base/ValueSpek : com/copperleaf/trelli
 	public fun getSpekName ()Ljava/lang/String;
 }
 
-public final class com/copperleaf/trellis/impl/BetweenDatesSpek : com/copperleaf/trellis/base/BaseSpek {
-	public fun <init> (Lcom/copperleaf/trellis/base/Spek;Lcom/copperleaf/trellis/base/Spek;Lcom/copperleaf/trellis/base/Spek;)V
-	public fun <init> (Ljava/time/LocalDate;Ljava/time/LocalDate;Ljava/time/LocalDate;)V
-	public fun evaluate (Lcom/copperleaf/trellis/visitor/SpekVisitor;Ljava/lang/Object;)Ljava/lang/Boolean;
-	public synthetic fun evaluate (Lcom/copperleaf/trellis/visitor/SpekVisitor;Ljava/lang/Object;)Ljava/lang/Object;
-}
-
-public final class com/copperleaf/trellis/impl/DateSpek : com/copperleaf/trellis/base/BaseSpek {
-	public fun <init> (Lcom/copperleaf/trellis/base/Spek;Lcom/copperleaf/trellis/base/Spek;Lcom/copperleaf/trellis/base/Spek;)V
-	public synthetic fun evaluate (Lcom/copperleaf/trellis/visitor/SpekVisitor;Ljava/lang/Object;)Ljava/lang/Object;
-	public fun evaluate (Lcom/copperleaf/trellis/visitor/SpekVisitor;Ljava/lang/Object;)Ljava/time/LocalDate;
-}
-
 public final class com/copperleaf/trellis/impl/booleans/AndSpek : com/copperleaf/trellis/base/BinaryOperationSpek {
 	public fun <init> (Lcom/copperleaf/trellis/base/Spek;Lcom/copperleaf/trellis/base/Spek;)V
 }
@@ -223,15 +210,6 @@ public final class com/copperleaf/trellis/impl/strings/StringLengthSpek : com/co
 	public fun <init> ()V
 	public synthetic fun evaluate (Lcom/copperleaf/trellis/visitor/SpekVisitor;Ljava/lang/Object;)Ljava/lang/Object;
 	public fun evaluate (Lcom/copperleaf/trellis/visitor/SpekVisitor;Ljava/lang/String;)Ljava/lang/Integer;
-}
-
-public final class com/copperleaf/trellis/introspection/visitor/PrintStreamVisitor : com/copperleaf/trellis/visitor/SpekVisitor {
-	public fun <init> ()V
-	public fun <init> (Ljava/io/PrintStream;)V
-	public synthetic fun <init> (Ljava/io/PrintStream;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public fun enter (Lcom/copperleaf/trellis/base/Spek;)V
-	public final fun getOut ()Ljava/io/PrintStream;
-	public fun leave (Lcom/copperleaf/trellis/base/Spek;Ljava/lang/Object;)V
 }
 
 public final class com/copperleaf/trellis/util/PrintSpekTreeKt {

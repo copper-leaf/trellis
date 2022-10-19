@@ -2,59 +2,54 @@ package com.copperleaf.trellis.impl
 
 import com.copperleaf.trellis.base.CandidateSpek
 import com.copperleaf.trellis.base.ValueSpek
-import com.copperleaf.trellis.expectThat
 import com.copperleaf.trellis.visitor.EmptyVisitor
-import com.copperleaf.trellis.isFalse
-import com.copperleaf.trellis.isTrue
+import io.kotest.core.spec.style.StringSpec
+import io.kotest.matchers.shouldBe
 import java.time.LocalDate
-import kotlin.test.Test
 
-class TestDates {
+class TestDates : StringSpec({
 
-    @Test
-    fun testBetweenDates() {
+    "testBetweenDates" {
         val startDate = LocalDate.now().minusDays(5)
         val endDate = LocalDate.now().plusDays(5)
 
         val spek = BetweenDatesSpek(ValueSpek(startDate), ValueSpek(endDate), CandidateSpek())
 
-        expectThat(spek.evaluate(EmptyVisitor, LocalDate.now())).isTrue()
-        expectThat(spek.evaluate(EmptyVisitor, LocalDate.now().minusDays(10))).isFalse()
-        expectThat(spek.evaluate(EmptyVisitor, LocalDate.now().plusDays(10))).isFalse()
+        spek.evaluate(EmptyVisitor, LocalDate.now()) shouldBe true
+        spek.evaluate(EmptyVisitor, LocalDate.now().minusDays(10)) shouldBe false
+        spek.evaluate(EmptyVisitor, LocalDate.now().plusDays(10)) shouldBe false
 
-        expectThat(spek.evaluate(EmptyVisitor, LocalDate.now().minusDays(5))).isTrue()
-        expectThat(spek.evaluate(EmptyVisitor, LocalDate.now().plusDays(5))).isTrue()
+        spek.evaluate(EmptyVisitor, LocalDate.now().minusDays(5)) shouldBe true
+        spek.evaluate(EmptyVisitor, LocalDate.now().plusDays(5)) shouldBe true
     }
 
-    @Test
-    fun testNoEndDate() {
+    "testNoEndDate" {
         val startDate = LocalDate.now().minusDays(5)
         val endDate: LocalDate? = null
 
         val spek =
             BetweenDatesSpek(ValueSpek(startDate), ValueSpek(endDate), CandidateSpek())
 
-        expectThat(spek.evaluate(EmptyVisitor, LocalDate.now())).isTrue()
-        expectThat(spek.evaluate(EmptyVisitor, LocalDate.now().minusDays(10))).isFalse()
-        expectThat(spek.evaluate(EmptyVisitor, LocalDate.now().plusDays(10))).isTrue()
-        expectThat(spek.evaluate(EmptyVisitor, LocalDate.MAX)).isTrue()
+        spek.evaluate(EmptyVisitor, LocalDate.now()) shouldBe true
+        spek.evaluate(EmptyVisitor, LocalDate.now().minusDays(10)) shouldBe false
+        spek.evaluate(EmptyVisitor, LocalDate.now().plusDays(10)) shouldBe true
+        spek.evaluate(EmptyVisitor, LocalDate.MAX) shouldBe true
 
-        expectThat(spek.evaluate(EmptyVisitor, LocalDate.now().minusDays(5))).isTrue()
+        spek.evaluate(EmptyVisitor, LocalDate.now().minusDays(5)) shouldBe true
     }
 
-    @Test
-    fun testNoStartDate() {
+    "testNoStartDate" {
         val startDate: LocalDate? = null
         val endDate = LocalDate.now().plusDays(5)
 
         val spek =
             BetweenDatesSpek(ValueSpek(startDate), ValueSpek(endDate), CandidateSpek())
 
-        expectThat(spek.evaluate(EmptyVisitor, LocalDate.now())).isTrue()
-        expectThat(spek.evaluate(EmptyVisitor, LocalDate.now().minusDays(10))).isTrue()
-        expectThat(spek.evaluate(EmptyVisitor, LocalDate.now().plusDays(10))).isFalse()
-        expectThat(spek.evaluate(EmptyVisitor, LocalDate.MIN)).isTrue()
+        spek.evaluate(EmptyVisitor, LocalDate.now()) shouldBe true
+        spek.evaluate(EmptyVisitor, LocalDate.now().minusDays(10)) shouldBe true
+        spek.evaluate(EmptyVisitor, LocalDate.now().plusDays(10)) shouldBe false
+        spek.evaluate(EmptyVisitor, LocalDate.MIN) shouldBe true
 
-        expectThat(spek.evaluate(EmptyVisitor, LocalDate.now().plusDays(5))).isTrue()
+        spek.evaluate(EmptyVisitor, LocalDate.now().plusDays(5)) shouldBe true
     }
-}
+})

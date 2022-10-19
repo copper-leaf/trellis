@@ -1,55 +1,46 @@
-package com.copperleaf.trellis.introspection.visitor
+package com.copperleaf.trellis.test.visitor
 
 import com.copperleaf.trellis.base.CandidateSpek
 import com.copperleaf.trellis.base.LazySpek
 import com.copperleaf.trellis.base.ValueSpek
-import com.copperleaf.trellis.expectThat
 import com.copperleaf.trellis.impl.conditionals.then
-import com.copperleaf.trellis.isEqualTo
-import kotlin.test.Test
+import io.kotest.core.spec.style.StringSpec
+import io.kotest.matchers.shouldBe
 
-class TestToString {
+class TestToString : StringSpec({
 
-    @Test
-    fun testValueSpekToString() {
+    "testValueSpekToString" {
         val spek = ValueSpek<Unit, String>("pass")
 
         println(spek.toString())
 
-        expectThat(spek.toString()).isEqualTo(
-            """
+        spek.toString() shouldBe """
             |(pass)
             """.trimMargin()
-        )
     }
 
-    @Test
-    fun testIfSpekToString() {
+    "testIfSpekToString" {
         val spek = CandidateSpek<Boolean>().then(ValueSpek("pass"), ValueSpek("fail"))
 
         println(spek.toString())
 
-        expectThat(spek.toString()).isEqualTo(
-            """
+        spek.toString() shouldBe """
             |(IfSpek:
             |  (CandidateSpek)
             |  (pass)
             |  (fail)
             |)
             """.trimMargin()
-        )
     }
 
-    @Test
-    fun testRecursiveSpekToString() {
+    "testRecursiveSpekToString" {
         val ifSpek = LazySpek<Boolean, String>()
 
         ifSpek uses CandidateSpek<Boolean>().then(ValueSpek("pass"), ifSpek)
 
         println(ifSpek.toString())
 
-        expectThat(ifSpek.toString()).isEqualTo(
-            """
+        ifSpek.toString() shouldBe """
             |(IfSpek:
             |  (IfSpek:
             |    (CandidateSpek)
@@ -60,6 +51,5 @@ class TestToString {
             |  )
             |)
             """.trimMargin()
-        )
     }
-}
+})

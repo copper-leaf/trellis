@@ -29,7 +29,6 @@ import com.copperleaf.trellis.impl.math.minus
 import com.copperleaf.trellis.impl.math.plus
 import com.copperleaf.trellis.impl.math.times
 
-@ExperimentalStdlibApi
 @Suppress("UNCHECKED_CAST")
 public class TrellisDslParser(
     private val namedSpeks: Map<String, SpekFactory>

@@ -1,5 +1,3 @@
-@file:OptIn(ExperimentalStdlibApi::class)
-
 package com.copperleaf.trellis.dsl
 
 import com.copperleaf.kudzu.parser.ParserContext
@@ -8,11 +6,12 @@ import com.copperleaf.trellis.base.ValueSpek
 import com.copperleaf.trellis.dsl.parser.TrellisDslParser
 import com.copperleaf.trellis.impl.math.plus
 import com.copperleaf.trellis.visitor.EmptyVisitor
-import kotlin.test.Test
+import io.kotest.core.spec.style.StringSpec
+import io.kotest.matchers.shouldBe
 
 @Suppress("UNCHECKED_CAST")
-class TrellisDslParserTest {
-    private val speks = mapOf<String, (List<Spek<*, *>>) -> Spek<*, *>>(
+class TrellisDslParserTest : StringSpec({
+    val speks = mapOf<String, (List<Spek<*, *>>) -> Spek<*, *>>(
         "asdf" to /*            */ { ValueSpek("asdf") },
         "qwerty" to /*          */ { ValueSpek("qwerty") },
         "_t" to /*              */ { ValueSpek(true) },
@@ -27,7 +26,7 @@ class TrellisDslParserTest {
         },
     )
 
-    private val literalSpekTests = listOf(
+    val literalSpekTests = listOf(
         "true" to true,
         "false" to false,
         "1" to 1,
@@ -38,7 +37,7 @@ class TrellisDslParserTest {
         "'\\uFDFD'" to '﷽',
         "\" \u00A2 \\u00A2 \\uFDFD \"" to " ¢ ¢ ﷽ ",
     )
-    private val namedSpekTests = listOf(
+    val namedSpekTests = listOf(
         "asdf" to "asdf",
         "qwerty" to "qwerty",
         "_t" to true,
@@ -56,7 +55,7 @@ class TrellisDslParserTest {
         "summing(one,two_point_three)" to 3.3,
         "summing(one,two_point_three,3,4,5,6,const(7),8,9)" to 45.3,
     )
-    private val expressionSpekTests = listOf(
+    val expressionSpekTests = listOf(
         "true and false" to false,
         "true or false" to true,
         "true and not false" to true,
@@ -92,10 +91,9 @@ class TrellisDslParserTest {
         "((2 / 4) == (const(one) - (0.5))) eq const(_t)" to true,
     )
 
-    private val underTest = TrellisDslParser(speks)
+    val underTest = TrellisDslParser(speks)
 
-    @Test
-    fun testParsingLiteralSpeks() {
+    "testParsingLiteralSpeks" {
         literalSpekTests.forEach { (input, expectedValue) ->
             val output = underTest
                 .literalSpekParser
@@ -106,13 +104,12 @@ class TrellisDslParserTest {
                 .isNotNull()
                 .also {
                     val parsedValue = it.value.evaluate(EmptyVisitor, null)
-                    parsedValue.isEqualTo(expectedValue)
+                    parsedValue shouldBe expectedValue
                 }
         }
     }
 
-    @Test
-    fun testParsingNamedSpeks() {
+    "testParsingNamedSpeks" {
         namedSpekTests.forEach { (input, expectedValue) ->
             val output = underTest
                 .namedSpekParser
@@ -123,13 +120,12 @@ class TrellisDslParserTest {
                 .isNotNull()
                 .also {
                     val parsedValue = it.value.evaluate(EmptyVisitor, null)
-                    parsedValue.isEqualTo(expectedValue)
+                    parsedValue shouldBe expectedValue
                 }
         }
     }
 
-    @Test
-    fun testParsingActualSpeks() {
+    "testParsingActualSpeks" {
         (literalSpekTests + namedSpekTests).forEach { (input, expectedValue) ->
             val output = underTest
                 .actualTermParser
@@ -140,13 +136,12 @@ class TrellisDslParserTest {
                 .isNotNull()
                 .also {
                     val parsedValue = it.value.evaluate(EmptyVisitor, null)
-                    parsedValue.isEqualTo(expectedValue)
+                    parsedValue shouldBe expectedValue
                 }
         }
     }
 
-    @Test
-    fun testParsingSpekExpression() {
+    "testParsingSpekExpression" {
         (expressionSpekTests + namedSpekTests).forEach { (input, expectedValue) ->
             val outputParserResult = underTest
                 .parser
@@ -164,7 +159,7 @@ class TrellisDslParserTest {
                 .evaluate(outputNode)
 
             val outputValue = outputSpek.evaluate(EmptyVisitor, null)
-            expectThat(outputValue).isEqualTo(expectedValue)
+            expectThat(outputValue) shouldBe expectedValue
         }
 
         (literalSpekTests).forEach { (input, expectedValue) ->
@@ -184,7 +179,7 @@ class TrellisDslParserTest {
                 .evaluate(outputNode)
 
             val outputValue = outputSpek.evaluate(EmptyVisitor, null)
-            expectThat(outputValue).isEqualTo(expectedValue)
+            expectThat(outputValue) shouldBe expectedValue
         }
     }
-}
+})
